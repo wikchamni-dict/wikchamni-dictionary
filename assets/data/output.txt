@@ -1,0 +1,80 @@
+
+=== STATISTICS ====
+
+371 entries are a valid x-theme with paradigms (222 n-theme, 141 v-theme, 8 prn-theme).
+226 entries are a valid v-base with paradigms
+3 entries are marked as x-theme, but contain no paradigms.
+6 entries are marked as v-base, but contain no paradigms.
+44 entries likely should have been x-theme (contain paradigms, but not marked as x-theme).
+
+To be flagged as a likely x-theme, an entry met these criteria:
+	1. \ps part-of-speech is NOT "n-theme", "v-theme", "prn-theme", or "v-base"
+	2. AND at least one \pd paradigm which isn't an underlying form
+
+
+
+=== X-THEME, BUT NO PARADIGMS (3) ===
+
+#760 (n-theme. ) hukoyʔuy/ — mixing thing or place.
+#2766 (n-theme. ) šukʰimhat/ — pipes.
+#4058 (v-theme. ) ṭʼuyʼṭʼuyʼwiti/ — drip repeatedly.
+
+
+
+=== V-BASE, BUT NO PARADIGMS (6) ===
+
+#306 (v-base. ) #čʼutopʰ — make six.
+#1703 (v-base. ) #nomočʼ — make seven.
+#1717 (v-base. ) #no·nopʰ — make nine.
+#2520 (v-base. ) #so·pʰoy — make three.
+#4554 (v-base. ) #yitʼin — make one.
+#4555 (v-base. ) #yitʼiš — make five.
+
+
+
+=== LIKELY X-THEME (44) ===
+
+#155 (n. ) čʼakiš/ — straw grass, wire grass, deergrass, basket filler.
+#162 (v. ) čʼamna/ — start.
+#174 (n. ) čʼapix/ — bird nest.
+#238 (n. ) čʼiwʼiyʼa/ — chipmunk (Merrium Chipmunk).
+#458 (int-prn. ) hawit/ — do what?
+#561 (int-prn. ) hiti·/ — where.
+#620 (v. ) hɨkʼhɨkʼwiti/ — to hiccup repeatedly.
+#715 (v. ) hoyʼi·/ — to send.
+#2534 (v. ) #sutʰu — put on, fit in.
+#3498 (v. ) #tʰitin — roll.
+#3616 (v. ) #tʼoŋon — drown.
+#919 (n. ) ka·tu/ — cat.
+#1447 (n. ) miṭʰi·/ — big in size.
+#1607 (n. ) natʰitʰhat/ — fathers.
+#1688 (n. ) niwit/ — another, different.
+#2459 (n. ) satakʼʔiy/ — waking time or place, alarm clock, sun-up.
+#2583 (n. ) šaša/ — eye.
+#2672 (v. ) šiyam/ — dry.
+#2822 (v. ) taktak/ — stay overnight repeatedly.
+#2826 (v. ) tamna/ — try, taste.
+#2836 (n. ) taŋa/ — hear.
+#2859 (v. ) taŋa·ʔačʼ/ — hearer.
+#3137 (n. ) tomotʰ/ — mountain, east.
+#3250 (n. ) tume·tʰi/ — mountains.
+#3300 (n. ) tuy/ — food.
+#3315 (n. ) tuyo·ʔučʼ/ — eater.
+#3339 (v. ) tuyutuyu/ — eat repetitively.
+#3528 (v. ) tʰuhna/ — making, aquiring spit.
+#3575 (n. ) tʼapʼtʼapʼ/ — leaf; leaves.
+#3588 (n. ) tʼepʰna/ — making acorn soup, making acorn mush.
+#3635 (n. ) tʼoyoxʔiy/ — doctor place.
+#3937 (v. ) ṭʼɨwə·ʔɨčʼ/ — one who wets, one who soaks.
+#3977 (n. ) ṭʼoto·ʔočʼ/ — one who peels.
+#4000 (v. ) ṭʼo·tin — will peel.
+#4309 (n. ) woṭʰo·ʔičʼ/ — hitter.
+#4437 (n. ) xotow — hard acorn bisquit.
+#4647 (n. ) ʔake·si/ — uncles, mother's brothers.
+#4829 (v. ) ʔepʰta/ — make x swim, bathe someone.
+#4844 (n. ) ʔe·nʼas/ — grandfather.
+#4866 (v. ) ʔə·kʼa/ — see, look at.
+#4917 (n. ) ʔinʼa·sa/ — grandfathers.
+#4932 (n. ) ʔipʰe·ʔičʼ/ — swimmer.
+#4942 (n. ) ʔitawʼa — flower.
+#5006 (n. ) ʔɨtə·mɨčʼ/ — story teller.
