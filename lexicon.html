@@ -12,6 +12,7 @@
 		<link rel="icon" type="image/png" href="assets/favicons/favicon-16x16.png" sizes="16x16"/>
 		<link rel="icon" type="image/png" href="assets/favicons/favicon-32x32.png" sizes="32x32"/>
 		<link rel="shortcut icon" href="favicon.ico" type="image/vnd.microsoft.icon" />
+		<link rel='stylesheet' href='assets/css/common.css'>
 		<!-- Google tag (gtag.js) -->
 		<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-4M1HFRESQ7"></script>
 		<script>
@@ -23,44 +24,206 @@
 			gtag('config', 'UA-5613790-32');
 		</script> -->
 		<style>
-			#main {
-				/* fill screen */
-				width: 100%;
-				max-width: 100vw;
-				height: 100%;
-				max-height: 100vh;
-				position: fixed;
-				top: 0;
-				left: 0;
-				inset: 0;
-				overflow: overlay;
-				/* flex-centered */
-				display: flex;
-				flex-direction: column !important;
-				justify-content: center;
-				align-items: center;
+			:root {
+				--dbg: #f0f;
+				--dark: #181818;
+				--white: #e3e6e8;
 
-				/* styling */
-				/* gap: 3em; */
+				--navbar-height: 2em;
+				--search-panel-width: 18em;
+				--search-panel-width: 25vw;
+				--search-panel-width: min(18em, 33vw);
 			}
-			#main > h1 {
-				font-size: 3em;
+
+			body {
+				background-color: var(--dark);
+				background-color: var(--dbg);
 			}
-			#main > p {
-				color: #888;
+
+			#main {
+				border: thin solid red;
+			}
+
+			.icon {
+				background-color: #557;
+				border-radius: 0.3em;
+				width: 1em;
+				height: 1em;
+			}
+
+
+
+			/**** NAVBAR ****/
+
+			/* navbar assumes it's inside screen-width flex-col */
+
+			#navbar {
+				color: var(--white);
+				background-color: var(--dark);
+				border-bottom: thin solid #557;
 				font-size: 1em;
+				height: var(--navbar-height);
+				padding: 0 0.5em;
+				position: relative;
+				/* gap: 1em; */
 			}
+			#navbar > h1 {
+				font-size: 1.3em;
+			}
+
+
+			/**** CONTENT ****/
+
+			#dictionary-search {
+				background-color: #888;
+				width: var(--search-panel-width);
+				min-width: 10em;
+				position: relative;
+				overflow: hidden;
+			}
+			#dictionary-entry {
+				background-color: #eee;
+				position: relative;
+				padding: 1em;
+				gap: 1em;
+				overflow: overlay;
+			}
+
+			#search-wrapper {
+				background-color: #def;
+				padding: 0.3em;
+				gap: 0.3em;
+			}
+			#search-footer {
+				background-color: #def;
+				padding: 0.3em;
+				font-size: 0.8em;
+			}
+
+			.entry-header {
+				gap: 0.5em;
+			}
+			.entry-L1 {
+				align-items: baseline;
+				gap: 1em;
+			}
+			.entry-L1 > h2 {
+				font-size: 1.5em;
+			}
+			.entry-L1 > p {
+				font-size: 0.8em;
+				font-style: italic;
+			}
+			.entry-L2 {
+				gap: 0.5em;
+			}
+
+			.entry-examples {
+				padding: 0 0.3em;
+				/* gap: 0.3em; */
+			}
+			.entry-example {
+				border-left: medium solid #557;
+				padding: 0.5em;
+			}
+			.entry-example > .flex-row-centered {
+				font-style: italic;
+				flex-shrink: 1;
+				gap: 0.5em;
+			}
+			.entry-example p {
+				/* flex-col > p wraps by default */
+				/* flex-col > flex-row > p doesn't */
+				flex: 1;
+			}
+
+			.entry-lexeme {
+				background-color: #abc;
+				border: medium solid #557;
+				padding: 0.5em;
+				gap: 0.5em;
+			}
+			.entry-lexeme > h3 {
+				border-bottom: thin solid #557;
+				padding: 0.3em;
+				padding-top: 0;
+			}
+			.entry-lexeme > div {
+				font-size: 0.8em;
+			}
+			.entry-lexeme > div > span {
+				/* font-weight: bold; */
+				text-decoration: underline;
+			}
+
 		</style>
 	</head>
 	<body>
 
-		<!-- Wrapper -->
-		<div id='main'>
-			<h1>Wikchamni Dictionary</h1>
-			<p>Under construction...</p>
+		<!-- static content -->
+		<div id='main' class='fill-screen flex-col'>
+			<nav id='navbar' class='flex-row-centered' role='navigation' aria-label='Top Level'>
+				<h1>Wikchamni Dictionary</h1>
+				<div class='flex-sep'></div>
+				<p>Nav Links</p>
+			</nav>
+
+			<div id='content' class='flex-row flex-grow'>
+				<section id='dictionary-search' class='flex-col' aria-label='Dictionary search'>
+					<div id='search-wrapper' class='flex-col'>
+						<p>begins-contains-ends</p>
+						<input id='searchbar' type='text' placeholder='Search...'>
+						<p>filters</p>
+					</div>
+					<div id='search-results-wrapper' class='flex-col flex-grow'>
+						<p>search results</p>
+					</div>
+					<div id='search-footer' class='flex-separated-row'>
+						<p>0/0 entries</p>
+						<p>0.000 sec</p>
+					</div>
+				</section>
+
+				<section id='dictionary-entry' class='flex-col flex-grow flex-shrink' aria-label='Dictionary entry'>
+					<div class='flex-col entry-header'>
+						<div class='flex-row entry-L1'>
+							<h2>English Word</h2>
+							<p>catg</p>
+						</div>
+						<div class='flex-row-centered entry-L2'>
+							<p>Wikchamni Word</p>
+							<button class='icon'></button>
+						</div>
+					</div>
+					<div class='flex-col entry-examples'>
+						<div class='flex-col entry-example'>
+							<p>English example sentence.</p>
+							<div class='flex-row-centered'>
+								<p>Wikchamni sentence translation.</p>
+								<button class='icon'></button>
+							</div>
+						</div>
+						<div class='flex-col entry-example'>
+							<p>English example sentence that is really long and might wrap the screen on smaller devices.</p>
+							<div class='flex-row-centered'>
+								<p>Wikchamni translation of sentence that is really long and might wrap the screen on smaller devices.</p>
+								<button class='icon'></button>
+							</div>
+						</div>
+					</div>
+					<div class='flex-col entry-lexeme'>
+						<h3>Other words in lexeme:</h3>
+						<div>
+							<span class='no-wrap'>Synonym 1</span>, <span class='no-wrap'>Synonym 2</span>, <span class='no-wrap'>Synonym 3</span>
+						</div>
+					</div>
+				</section>
+			</div>
 		</div>
 
-		<!-- Scripts -->
+		<!-- templates -->
+
+		<!-- scripts -->
 
 	</body>
 </html>
