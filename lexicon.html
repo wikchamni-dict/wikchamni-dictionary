@@ -28,11 +28,29 @@
 				--dbg: #f0f;
 				--dark: #181818;
 				--white: #e3e6e8;
+				--highlight: #2f91ff;
+				--primary-dark: #557;
+				--primary-grey: #abc;
+
+				--offwhite: #f3f6ff;
+				--offwhite-tint: #eef0ff;
+				--offwhite-tint: #e0e8ff;
+				--offwhite-tint: #e0e8ee;
+				--offwhite-tint: #e4e8f8;
+				--offlight: #e3e6e8;
+
+				--text-subtitle: #667;
+				--bg-light: var(--offwhite);
+				--bg-light-2: var(--offwhite-tint);
+				--border-light: var(--offlight);
+				--border-medium: var(--text-subtitle);
 
 				--navbar-height: 2em;
 				--search-panel-width: 18em;
 				--search-panel-width: 25vw;
 				--search-panel-width: min(18em, 33vw);
+
+				--panel-border: thin solid var(--border-light);
 			}
 
 			body {
@@ -40,16 +58,11 @@
 				background-color: var(--dbg);
 			}
 
-			#main {
+			/* #main {
 				border: thin solid red;
-			}
+			} */
 
-			.icon {
-				background-color: #557;
-				border-radius: 0.3em;
-				width: 1em;
-				height: 1em;
-			}
+			
 
 
 
@@ -72,32 +85,165 @@
 			}
 
 
-			/**** CONTENT ****/
+
+			/**** SEARCH ****/
 
 			#dictionary-search {
-				background-color: #888;
+				background-color: var(--bg-light);
 				width: var(--search-panel-width);
 				min-width: 10em;
+				/* min-height: 16em; */
+				max-height: calc(100vh - var(--navbar-height));
 				position: relative;
-				overflow: hidden;
+				overflow: overlay;
+
+				/* border-right: thin solid var(--border-light); */
+				border-right: var(--panel-border);
 			}
+
+			#search-wrapper {
+				padding: 0.3em;
+				gap: 0.3em;
+			}
+			#search-patterns {
+				gap: 0.5em;
+			}
+			#search-patterns > button {
+				/* border: thin solid red; */
+				color: var(--text-subtitle);
+				width: 4em;
+				font-size: 0.8em;
+			}
+			#search-patterns > button:hover {
+				color: black;
+				text-decoration: underline;
+			}
+			#search-patterns > button:focus-visible {
+				color: black !important;
+				outline: medium solid var(--highlight) !important;
+			}
+			#search-patterns > button.active {
+				color: black;
+				border-bottom: medium solid var(--highlight);
+			}
+
+			#searchbar {
+				background-color: white;
+				border: thin solid var(--border-light);
+				border-radius: 0.25em;
+				padding: 0.15em 0.5em;
+				padding-right: 6em;
+				font-size: 1em;
+			}
+			#searchbar:active {
+				border: thin solid var(--border-medium);
+				outline: none;
+			}
+			#searchbar:focus-visible {
+				border: thin solid var(--highlight);
+				outline: thin solid var(--highlight);
+			}
+			#searchbar-actions {
+				/* border: thin solid red; */
+				height: 100%;
+				position: absolute;
+				right: 0;
+				padding-right: 0.15em;
+				/* gap: 0.2em; */
+			}
+			.search-lang {
+				color: var(--highlight);
+				background-color: transparent;
+				/* outline: thin solid var(--highlight); */
+				width: 1.5em;
+				width: 2em;
+			}
+			.search-lang.active {
+				color: white;
+				background-color: var(--highlight);
+			}
+			.search-lang:focus-visible {
+				outline: medium solid var(--dark);
+			}
+			#search-copy-chars > button {
+				border-radius: 0.25em;
+				padding: 0 0.5em;
+			}
+			#search-copy-chars > button:hover {
+				background-color: white;
+			}
+			#search-copy-chars > button:focus-visible {
+				outline: medium solid black;
+			}
+
+			#search-results-wrapper {
+				background-color: var(--bg-light-2);
+				border-top: var(--panel-border);
+				border-bottom: var(--panel-border);
+				padding: 0.25em;
+				overflow-x: hidden;
+				overflow-y: overlay;
+			}
+			.search-result {
+				padding: 0.1em;
+				padding-left: 0.25em;
+				gap: 0.2em;
+			}
+			.search-result:hover {
+				background-color: white;
+			}
+			.search-result:focus-visible {
+				outline: medium solid black;
+				z-index: var(--layer-front);
+			}
+			.search-result + .search-result {
+				border-top: thin solid var(--primary-grey);
+			}
+			/* .search-result.hidden + .search-result {
+				border-top: thin solid transparent;
+			} */
+			/* .search-result + .search-result.hidden {
+				border-top: thin solid transparent;
+			} */
+			.search-result.active {
+				background-color: white;
+				box-shadow: inset 5px 0 0 0 var(--highlight) !important;;
+			}
+			.search-result-catg {
+				/* border: thin solid red; */
+				color: var(--text-subtitle);
+				width: 2em;
+				text-align: center;
+				font-size: 0.8em;
+			}
+			.search-result-word {
+				text-align: left;
+				flex-shrink: 1;
+				flex-grow: 1;
+			}
+			.search-results-status {
+				color: var(--text-subtitle);
+				padding: 2em 0;
+				font-size: 1.2em;
+				text-align: center;
+			}
+
+			#search-footer {
+				color: var(--border-medium);
+				padding: 0.3em;
+				font-size: 0.8em;
+			}
+
+
+
+			/**** ENTRY DISPLAY ****/
+
 			#dictionary-entry {
-				background-color: #eee;
+				background-color: white;
 				position: relative;
 				padding: 1em;
 				gap: 1em;
 				overflow: overlay;
-			}
-
-			#search-wrapper {
-				background-color: #def;
-				padding: 0.3em;
-				gap: 0.3em;
-			}
-			#search-footer {
-				background-color: #def;
-				padding: 0.3em;
-				font-size: 0.8em;
 			}
 
 			.entry-header {
@@ -131,10 +277,9 @@
 				flex-shrink: 1;
 				gap: 0.5em;
 			}
-			.entry-example p {
-				/* flex-col > p wraps by default */
-				/* flex-col > flex-row > p doesn't */
-				flex: 1;
+			.entry-example > .flex-row-centered > p {
+				/* flex-row wrapper changes flex axis */
+				flex-shrink: 1;
 			}
 
 			.entry-lexeme {
@@ -156,6 +301,53 @@
 				text-decoration: underline;
 			}
 
+
+
+			/**** ICONOGRAHPY ****/
+
+			/* .icon {
+				background-color: #557;
+				border-radius: 0.3em;
+				width: 1em;
+				height: 1em;
+			} */
+
+			.icon {
+				--pad: 0.2em;
+				border-radius: 0.25em;
+				width: calc(1em + 2 * var(--pad));
+				height: calc(1em + 2 * var(--pad));
+				position: relative;
+			}
+			.icon:focus-visible {
+				outline: medium solid var(--dark);
+			}
+
+			.icon-dbg {
+				background-color: #557;
+			}
+
+			.icon-x::before, .icon-x::after {
+				content: '';
+				background-color: #557;
+				border-radius: 1em;
+				display: inline-block;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				width: 0.1em;
+				height: 1em;
+			}
+			.icon-x::before {
+				transform: translate(-50%,-50%) rotate(45deg);
+			}
+			.icon-x::after {
+				transform: translate(-50%,-50%) rotate(-45deg);
+			}
+			.icon-x:hover::before, .icon-x:hover::after {
+				background-color: red;
+			}
+
 		</style>
 	</head>
 	<body>
@@ -171,16 +363,52 @@
 			<div id='content' class='flex-row flex-grow'>
 				<section id='dictionary-search' class='flex-col' aria-label='Dictionary search'>
 					<div id='search-wrapper' class='flex-col'>
-						<p>begins-contains-ends</p>
-						<input id='searchbar' type='text' placeholder='Search...'>
-						<p>filters</p>
+						<div id='search-patterns' class='flex-row flex-centered'>
+							<button id='search-pattern-begins' class='active'>Begins</button>
+							<button id='search-pattern-contains'>Contains</button>
+							<button id='search-pattern-ends'>Ends</button>
+						</div>
+						<div class='flex-col pos-anchor'>
+							<input id='searchbar' type='text' placeholder='Search...'>
+							<div id='searchbar-actions' class='flex-row-centered'>
+								<button id='search-lang-L1' class='search-lang active' title='Search in English'>EN</button>
+								<button id='search-lang-L2' class='search-lang' title='Search in Wikchamni'>WK</button>
+								<button id='search-clear' class='icon icon-x' title='Clear search'></button>
+							</div>
+						</div>
+						<div id='search-copy-chars' class='flex-row flex-centered'>
+							<!-- <button>a</button>
+							<button>b</button>
+							<button>c</button>
+							<button>d</button> -->
+						</div>
 					</div>
-					<div id='search-results-wrapper' class='flex-col flex-grow'>
-						<p>search results</p>
+					<div id='search-results-wrapper' class='flex-col flex-shrink flex-grow'>
+						<!-- <div id='search-results' class='flex-col'>
+							<button class='flex-row-centered search-result active'>
+								<p class='search-result-catg'>Adj</p>
+								<p class='search-result-word'>Abblecrab</p>
+								<div class='icon icon-dbg'></div>
+								<div class='icon icon-dbg'></div>
+							</button>
+							<button class='flex-row-centered search-result'>
+								<p class='search-result-catg'>N</p>
+								<p class='search-result-word'>Cab'apple</p>
+								<div class='icon icon-dbg'></div>
+								<div class='icon icon-dbg'></div>
+							</button>
+							<button class='flex-row-centered search-result'>
+								<p class='search-result-catg'>V</p>
+								<p class='search-result-word'>Cabdab Obb</p>
+								<div class='icon icon-dbg'></div>
+								<div class='icon icon-dbg'></div>
+							</button>
+						</div> -->
+						<p class='search-results-status'>Loading...</p>
 					</div>
 					<div id='search-footer' class='flex-separated-row'>
-						<p>0/0 entries</p>
-						<p>0.000 sec</p>
+						<p id='search-stat-num-results'>0/0 entries</p>
+						<p id='search-stat-time'>0.000 sec</p>
 					</div>
 				</section>
 
@@ -222,6 +450,14 @@
 		</div>
 
 		<!-- templates -->
+		<template id='tpl-search-result'>
+			<button class='flex-row-centered search-result'>
+				<p class='search-result-catg'>Adj</p>
+				<p class='search-result-word'>Abblecrab</p>
+				<div class='icon'></div>
+				<div class='icon'></div>
+			</button>
+		</template>
 
 		<!-- scripts -->
 		<script type='module' src='assets/js/parse-toolbox-output.js'></script>
