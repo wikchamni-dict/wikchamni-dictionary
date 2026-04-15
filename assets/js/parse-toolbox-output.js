@@ -16,7 +16,7 @@ const TOKEN_CATG = 'ps';
 const TOKEN_LAST_EDIT = 'dt';
 const TOKEN_MORPHOLOGY = 'mr'; // in x-theme entries this is an actual morphology note; for everything else, it's the name of the headword's grammatical case
 // alternates
-const TOKEN_WORD_SENSE = 'sn'; // L2 headword is homophone/homograph of multiple L1 words
+const TOKEN_WORD_SENSE = 'sn'; // L2 headword is homophone/homograph of multiple L2 words
 const TOKEN_VARIANT = 'va'; // spelling variation of previous run-starter
 const TOKEN_ALTERNATION = 'a'; // also spelling variation of previous run-starter
 // examples
@@ -98,7 +98,7 @@ const TOKEN_PARADIGM_ACQUISITIVE = 'acq';
 const TOKEN_PARADIGM_INCHOACTIVE = 'inc';
 const TOKEN_PARADIGM_GENITIVE = 'gen';
 const TOKEN_PARADIGM_RESIDENT = 'res';
-const TOKEN_PARADIGM_DECENDENT = 'dec';
+const TOKEN_PARADIGM_DECENDENT = 'dec'; // when speaking about deceased person
 const TOKEN_PARADIGM_DIMINUTIVE = 'dim';
 
 // prn-theme paradigms (\pd, \pdl, and \pdv appear exclusively in prn-theme entries)
@@ -233,7 +233,12 @@ let WORDFORM_NAMES = Object.freeze({
     [TOKEN_PARADIGM_REFLEXIVE_RECIPROCAL_VERBAL_NOUN] : 'Reflexive-Reciprocal Verbal Noun',
     [TOKEN_PARADIGM_REFLEXIVE_RECIPROCAL_ADJUNCTIVE] : 'Reflexive-Reciprocal Adjunctive',
 	[TOKEN_PARADIGM_MULTIPLICATIVE_GERUNDIAL_ALT] : 'Multiplicative Gerundial',
+
+	// variants (TODO: temp measure, handle like L2 synonym eventually)
+	[TOKEN_VARIANT] : 'Variant',
+	[TOKEN_ALTERNATION] : 'A',
 });
+const getWordformName = (tokenType) => WORDFORM_NAMES[tokenType] || '';
 
 
 
@@ -266,7 +271,7 @@ const PARSE_RUN_STARTERS = Object.freeze((() => {
 		// entry data
 		TOKEN_LAST_EDIT, TOKEN_MORPHOLOGY,
 		// alternates
-		TOKEN_VARIANT,
+		// TOKEN_VARIANT,
 		// examples
 		TOKEN_EXAMPLE_L2,
 		// links to other entries
@@ -301,25 +306,15 @@ const BlankEntry = () => {
 		isLexeme : false,
 		L1 : [], // array of strings : eng word/definition
 		catg : '', // string : part of speech abbreviation
-		L2 : [], // array of objects {L2,audio}
-		examples : [], // array of objects {L1,L2,audio}
-	}
-};
-const BlankLexeme = () => {
-	return {
-		isLexeme : true,
-		L1 : [], // array of strings : eng word/definition
-		catg : '', // string : part of speech abbreviation
-		L2 : [], // array of objects {L2,form}
+		L2 : [], // array of objects {L2,form,(audio)}
+		examples : [], // array of objects {L1,L2,(audio)}
 	}
 };
 const entryToLexeme = (entry) => {
-	let lx = BlankLexeme();
-	for (let L1 of entry.L1 ?? []) lx.L1.push(L1);
-	lx.catg = entry.catg;
-	for (let L2 of entry.L2 ?? []) lx.L2.push(L2);
+	entry.isLexeme = true;
+	if (entry.L2.length > 0) entry.L2[0].form = TOKEN_PARADIGM_UNDERLYING; // headword is underlying form by default
 	if (entry.examples?.length > 0) console.warn(`L2 examples before \\ps in entry for "${lx.L1.join(SYNONYM_JOIN)}"`);
-	return lx;
+	return entry;
 };
 
 
@@ -441,7 +436,9 @@ const parse = (text) => {
 					: entries.push(currEntry)
 			}
 			currEntry = BlankEntry();
-			currEntry.L2.push({L2:token.contents, form:undefined});
+			for (let L2 of token.contents.split(RE_SYNONYM_SPLITTER)) {
+				currEntry.L2.push({L2:L2, form:undefined});
+			}
 			currAttachPoint = currEntry.L2[currEntry.L2.length-1];
 			break;
 		case TOKEN_CATG: // convert entry to lexeme if part of speech is x-theme
@@ -454,7 +451,7 @@ const parse = (text) => {
 			break;
 		case TOKEN_GLOSS_L1: // L1
 		case TOKEN_DEFINITION_L1:
-			currEntry.L1.push(token.contents);
+			currEntry.L1.push(...token.contents.split(RE_SYNONYM_SPLITTER));
 			break;
 		// examples, from sequences of \xv \ge (\sfx)
 		case TOKEN_EXAMPLE_L2: // examples
@@ -505,11 +502,15 @@ const parse = (text) => {
 			// n-theme,v-theme,v-base lexeme entries specify wordform catg with special token type
 			if (WORDFORM_NAMES[token.type]) {
 				if (!currEntry.isLexeme && token.type !== TOKEN_PARADIGM_UNDERLYING) console.warn(`Lexeme catg token "${token.type}" appeared in standard entry "${currEntry.L1.join(SYNONYM_JOIN)}" of catg "${currEntry.catg}"`);
-				currEntry.L2.push({L2:token.contents, form:token.type});
+				for (let L2 of token.contents.split(RE_SYNONYM_SPLITTER)) {
+					currEntry.L2.push({L2:L2, form:token.type});
+				}
 			// prn-theme lexeme entries specify wordform and catg with \pdl \pdv pairs
 			} else if (token.type === TOKEN_PARADIGM_LABEL) {
 				if (!currEntry.isLexeme) console.warn(`Lexeme paradigm label "${token.type}" appeared in standard entry "${currEntry.L1.join(SYNONYM_JOIN)}" of catg "${currEntry.catg}"`);
-				currEntry.L2.push({L2:token.contents, form:undefined}); // create new paradigm with this label
+				for (let L2 of token.contents.split(RE_SYNONYM_SPLITTER)) {
+					currEntry.L2.push({L2:L2, form:undefined}); // create new paradigm with this label
+				}
 			} else if (token.type === TOKEN_PARADIGM_VERNACULAR) {
 				if (!currEntry.isLexeme) console.warn(`Lexeme paradigm vernacular "${token.type}" appeared in standard entry "${currEntry.L1.join(SYNONYM_JOIN)}" of catg "${currEntry.catg}"`);
 				if (currEntry.L2?.length < 1) {
@@ -561,5 +562,6 @@ const loadDatabase = async () => {
 ////////////////////////////////////
 
 export {
-	loadDatabase
+	loadDatabase,
+	getWordformName
 }
