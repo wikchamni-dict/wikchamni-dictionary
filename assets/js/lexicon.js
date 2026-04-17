@@ -1,37 +1,84 @@
 
 import * as parser from './parse-toolbox-output.js';
 
+
+
+//// DATA /////////////////////////////////////////////////////////////////////
+
+// enum
 const CARD_TYPE_ENTRY = false;
 const CARD_TYPE_LEXEME = true;
 
+// regex
 const RE_SYNONYM_SPLITTER = /;\s*/;
 const SYNONYM_JOIN = '; ';
 
-// data
+// ling data
 const CATG_ABBRS = Object.freeze({
     'n-theme' : 'N-Thm',
     'prn-theme' : 'P-Thm',
     'v-theme' : 'V-Thm',
     'v-base' : 'VB',
 });
-const COPYABLE_CHARS = Object.freeze(['č','ŋ','š','ṭ','ʔ','ʰ','ə','ɨ','·']);
-const MSG_COPY_CHAR = `Click to insert, shift+click to copy.`;
-const CHAR_PRONUNCIATION = Object.freeze({
-    'č' : `[č] is pronounced like the "ch" in "church".`,
-    'ŋ' : `[ŋ] is pronounced like the "ng" in "sing".`,
-    'š' : `[š] is pronounced like the "sh" in "shirt".`,
-    'ṭ' : `[ṭ] is pronounced like the "tr" in "train".`,
-    'ʔ' : `[ʔ] is pronounced like the break between sounds in "uh-oh".`,
-    'ʰ' : `[ʰ] makes the previous consonant aspirated. You should feel a puff of air in front of your lips while saying [tʰap], but not [tap].`,
-    'ə' : `[ə] is pronounced like the "e" in "egg", but with rounded lips.`,
-    'ɨ' : `[ɨ] is pronounced like the "i" in "big", but with rounded lips.`,
-    '·' : `[·] makes the previous vowel twice as long.`,
+const MSG_COPYCHAR_DEFAULT = `Click to insert.`;
+const MSG_COPYCHAR_TEMPLATE = `Click to insert, or type`;
+const COPYCHARS = Object.freeze({
+    'č' : {
+        shortcuts : ['C','c'],
+        msgPronunciation : `[č] is pronounced like the "ch" in "church".`,
+    },
+    'ŋ' : {
+        shortcuts : ['N','n'],
+        msgPronunciation : `[ŋ] is pronounced like the "ng" in "sing".`,
+    },
+    'š' : {
+        shortcuts : ['S','s'],
+        msgPronunciation : `[š] is pronounced like the "sh" in "shirt".`,
+    },
+    'ṭ' : {
+        shortcuts : ['T','t'],
+        msgPronunciation : `[ṭ] is pronounced like the "tr" in "train".`,
+    },
+    'ʔ' : {
+        shortcuts : ['?','/'],
+        msgPronunciation : `[ʔ] is pronounced like the break between sounds in "uh-oh".`,
+    },
+    'ʰ' : {
+        shortcuts : ['H','h'],
+        msgPronunciation : `[ʰ] makes the previous consonant aspirated. You should feel a puff of air in front of your lips while saying [tʰap], but not [tap].`,
+    },
+    'ə' : {
+        shortcuts : ['E','e'],
+        msgPronunciation : `[ə] is pronounced like the "e" in "egg", but with rounded lips.`,
+    },
+    'ɨ' : {
+        shortcuts : ['I','i'],
+        msgPronunciation : `[ɨ] is pronounced like the "i" in "big", but with rounded lips.`,
+    },
+    '·' : {
+        shortcuts : ['.','>'],
+        msgPronunciation : `[·] makes the previous vowel twice as long.`,
+    },
 });
-// helpers
+
+
+
+//// WINDOW ///////////////////////////////////////////////////////////////////
+
+// key state tracking
+let altDown = false; // alt used to insert special characters
+window.addEventListener('keydown', evt => {
+    // console.log(evt.key);
+    if (evt.key === 'Alt') altDown = true;
+});
+window.addEventListener('keyup', evt => {
+    if (evt.key === 'Alt') altDown = false;
+});
+
+// text formatting
 const capitalize = (text='') => (text[0]?.toUpperCase() ?? '') + text.slice(1);
-// const capitalizeMulti = (text) => text.replaceAll(/\b[a-z]/g, c => c.toUpperCase());
 const capitalizeMulti = (text='') => text.replaceAll(/(?:^|[^\w'])([a-z])/g, c => c.toUpperCase());
-// console.log(capitalizeMulti('hello world hi-ho it\'s off To Work,we;go'));
+// const capitalizeMulti = (text) => text.replaceAll(/\b[a-z]/g, c => c.toUpperCase());
 
 // DOM anchors
 const eCopyChars = document.querySelector('#search-copy-chars');
@@ -39,7 +86,7 @@ const eSearchResults = document.querySelector('#search-results-wrapper');
 const eNumResults = document.querySelector('#search-stat-num-results');
 const eSearchTime = document.querySelector('#search-stat-time');
 const eEntryDisplay = document.querySelector('#dictionary-entry');
-// object-pooled DOM elements (reuseable)
+// reusable/object-pooled DOM elements
 const eSearchResultsStatus = Object.assign(document.createElement('p'), {
     classList : `search-results-status`,
     textContent : `No results...`
@@ -59,18 +106,7 @@ let audioPlayer = {
 
 
 
-
-//// IMPORT DATA ////
-
-// load toolbox data
-const t0_page = performance.now();
-const parse = await parser.loadDatabase();
-// console.log(parse);
-const t1_page = performance.now();
-
-
-
-//// INDEX DATA ////
+//// INDEX DATA ///////////////////////////////////////////////////////////////
 
 let indexL1 = []; // index[entryId] = IndexCard{}; alphabetized by case-insensative (word,catg)
 let indexL2 = [];
@@ -87,159 +123,123 @@ const IndexCard = (type,id,word='',catg='',hasAudio=false,hasImages=false) => {
     }
 };
 
-// index standard entries
-for (let i = 0; i < parse.entries.length; i++) {
-    // scan media
-    let hasImages = false;
-    let hasAudio = false;
-    if (parse.entries[i].images?.length > 0) hasImages = true;
-    for (let L2 of parse.entries[i].L2 ?? []) {
-        if (L2.audio?.length > 0) {
-            hasAudio = true;
-            break;
-        }
-    }
-    for (let example of parse.entries[i].examples ?? []) {
-        if (example.audio?.length > 0) {
-            hasAudio = true;
-            break;
-        }
-    }
-    // scan words
-    for (let raw of parse.entries[i].L1 ?? []) {
-        const synonyms = raw.split(RE_SYNONYM_SPLITTER);
-        if (synonyms.length > 1) console.error(`The word "${raw}" in L1 of entry ${i} conatined semicolon-separated words.`);
-        for (let L1 of synonyms) {
-            indexL1.push(
-                IndexCard(CARD_TYPE_ENTRY,i,L1,parse.entries[i].catg,hasAudio,hasImages)
-            );
-        }
-    }
-    for (let raw of parse.entries[i].L2 ?? []) {
-        const synonyms = raw.L2.split(RE_SYNONYM_SPLITTER);
-        if (synonyms.length > 1) console.error(`The word "${raw}" in L2 of entry ${i} conatined semicolon-separated words.`);
-        for (let L2 of synonyms) {
-            indexL2.push(
-                IndexCard(CARD_TYPE_ENTRY,i,L2,parse.entries[i].catg,hasAudio,hasImages)
-            );
-        }
-    }
-}
-// index lexeme entries
-for (let i = 0; i < parse.lexemes.length; i++) {
-    // scan media
-    let hasImages = false;
-    let hasAudio = false;
-    if (parse.lexemes[i].images?.length > 0) {
-        hasImages = true;
-        console.log(`${parse.lexemes[i].images.length} image files in lexeme-type entry ${i}`);
-    }
-    for (let L2 of parse.lexemes[i].L2 ?? []) {
-        if (L2.audio?.length > 0) {
-            hasAudio = true;
-            console.log(`${L2.audio.length} audio files from wordform "${L2.L2}" in lexeme-type entry ${i}`);
-            break;
-        }
-    }
-    for (let example of parse.lexemes[i].examples ?? []) {
-        if (example.audio?.length > 0) {
-            hasAudio = true;
-            console.log(`${example.audio.length} audio files from wordform "${example.L2}" in lexeme-type entry ${i}`);
-            break;
-        }
-    }
-    // scan words
-    for (let raw of parse.lexemes[i].L1 ?? []) {
-        const synonyms = raw.split(RE_SYNONYM_SPLITTER);
-        if (synonyms.length > 1) console.error(`The word "${raw}" in L1 of lexeme ${i} conatined semicolon-separated words.`);
-        for (let L1 of synonyms) {
-            indexL1.push(
-                IndexCard(CARD_TYPE_LEXEME,i,L1,parse.lexemes[i].catg,hasAudio,hasImages)
-            );
-        }
-    }
-    for (let raw of parse.lexemes[i].L2 ?? []) {
-        const synonyms = raw.L2.split(RE_SYNONYM_SPLITTER);
-        if (synonyms.length > 1) console.error(`The word "${raw}" in L2 of lexeme ${i} conatined semicolon-separated words.`);
-        for (let L2 of synonyms) {
-            indexL2.push(
-                IndexCard(CARD_TYPE_LEXEME,i,L2,parse.lexemes[i].catg,hasAudio,hasImages)
-            );
-        }
-    }
-}
-const t2_page = performance.now();
-console.log(`Entries indexed in ${Math.round(t2_page-t1_page)} ms.`);
-
-// alphabetize index cards by (word,catg)
-indexL1.sort((a,b) => {
+const indexCardSorter = (a,b) => {
+    // given two index cards, case-insensative sort by (word,catg)
     const keyA = `${a.word.toLowerCase()}${SYNONYM_JOIN}${a.catg.toLowerCase()}`;
     const keyB = `${b.word.toLowerCase()}${SYNONYM_JOIN}${b.catg.toLowerCase()}`;
     if (keyA < keyB) return -1;
     if (keyA > keyB) return 1;
     return 0;
-});
-console.log(indexL1);
-indexL2.sort((a,b) => {
-    const keyA = `${a.word.toLowerCase()}${SYNONYM_JOIN}${a.catg.toLowerCase()}`;
-    const keyB = `${b.word.toLowerCase()}${SYNONYM_JOIN}${b.catg.toLowerCase()}`;
-    if (keyA < keyB) return -1;
-    if (keyA > keyB) return 1;
-    return 0;
-});
-console.log(indexL2);
-const t3_page = performance.now();
-console.log(`Index cards alphabetized in ${Math.round(t3_page-t2_page)} ms.`);
+};
 
-// build dom elems from template
-for (let card of indexL1) {
-    const entry = (card.isLexeme) ? parse.lexemes[card.id] : parse.entries[card.id];
-    if (!entry) {
-        console.error(`Index card points to ${(card.isLexeme?'lexeme ':'')}entry that doesn't exist.`, card);
-        continue;
+const indexEntries = (parse) => {
+    // index standard entries
+    for (let i = 0; i < parse.entries.length; i++) {
+        // scan media
+        let hasImages = false;
+        let hasAudio = false;
+        if (parse.entries[i].images?.length > 0) hasImages = true;
+        for (let L2 of parse.entries[i].L2 ?? []) {
+            if (L2.audio?.length > 0) {
+                hasAudio = true;
+                break;
+            }
+        }
+        for (let example of parse.entries[i].examples ?? []) {
+            if (example.audio?.length > 0) {
+                hasAudio = true;
+                break;
+            }
+        }
+        // scan words
+        for (let raw of parse.entries[i].L1 ?? []) {
+            const synonyms = raw.split(RE_SYNONYM_SPLITTER);
+            if (synonyms.length > 1) console.error(`The word "${raw}" in L1 of entry ${i} conatined semicolon-separated words.`);
+            for (let L1 of synonyms) {
+                indexL1.push(
+                    IndexCard(CARD_TYPE_ENTRY,i,L1,parse.entries[i].catg,hasAudio,hasImages)
+                );
+            }
+        }
+        for (let raw of parse.entries[i].L2 ?? []) {
+            const synonyms = raw.L2.split(RE_SYNONYM_SPLITTER);
+            if (synonyms.length > 1) console.error(`The word "${raw}" in L2 of entry ${i} conatined semicolon-separated words.`);
+            for (let L2 of synonyms) {
+                indexL2.push(
+                    IndexCard(CARD_TYPE_ENTRY,i,L2,parse.entries[i].catg,hasAudio,hasImages)
+                );
+            }
+        }
     }
-    card.domElement = document.getElementById('tpl-search-result').content.firstElementChild.cloneNode(true);
-    const e = card.domElement;
-    e.querySelector('.search-result-catg').textContent = CATG_ABBRS[card.catg] ?? capitalize(card.catg);
-    e.querySelector('.search-result-word').textContent = card.word;
-    if (card.hasImages) {
-        e.querySelector('.icon:nth-of-type(1)').classList.add('icon-image');
-        e.querySelector('.icon:nth-of-type(1)').title = 'Has image(s)';
+    // index lexeme entries
+    for (let i = 0; i < parse.lexemes.length; i++) {
+        // scan media
+        let hasImages = false;
+        let hasAudio = false;
+        if (parse.lexemes[i].images?.length > 0) {
+            hasImages = true;
+            console.log(`${parse.lexemes[i].images.length} image files in lexeme-type entry ${i}`);
+        }
+        for (let L2 of parse.lexemes[i].L2 ?? []) {
+            if (L2.audio?.length > 0) {
+                hasAudio = true;
+                console.log(`${L2.audio.length} audio files from wordform "${L2.L2}" in lexeme-type entry ${i}`);
+                break;
+            }
+        }
+        for (let example of parse.lexemes[i].examples ?? []) {
+            if (example.audio?.length > 0) {
+                hasAudio = true;
+                console.log(`${example.audio.length} audio files from wordform "${example.L2}" in lexeme-type entry ${i}`);
+                break;
+            }
+        }
+        // scan words
+        for (let raw of parse.lexemes[i].L1 ?? []) {
+            const synonyms = raw.split(RE_SYNONYM_SPLITTER);
+            if (synonyms.length > 1) console.error(`The word "${raw}" in L1 of lexeme ${i} conatined semicolon-separated words.`);
+            for (let L1 of synonyms) {
+                indexL1.push(
+                    IndexCard(CARD_TYPE_LEXEME,i,L1,parse.lexemes[i].catg,hasAudio,hasImages)
+                );
+            }
+        }
+        for (let raw of parse.lexemes[i].L2 ?? []) {
+            const synonyms = raw.L2.split(RE_SYNONYM_SPLITTER);
+            if (synonyms.length > 1) console.error(`The word "${raw}" in L2 of lexeme ${i} conatined semicolon-separated words.`);
+            for (let L2 of synonyms) {
+                indexL2.push(
+                    IndexCard(CARD_TYPE_LEXEME,i,L2,parse.lexemes[i].catg,hasAudio,hasImages)
+                );
+            }
+        }
     }
-    if (card.hasAudio) {
-        e.querySelector('.icon:nth-of-type(2)').classList.add('icon-audio');
-        e.querySelector('.icon:nth-of-type(2)').title = 'Has audio';
+};
+const populateIndexDOMElementsFor = (index) => {
+    for (let card of index) {
+        const entry = (card.isLexeme) ? parse.lexemes[card.id] : parse.entries[card.id];
+        if (!entry) {
+            console.error(`Index card points to ${(card.isLexeme?'lexeme ':'')}entry that doesn't exist.`, card);
+            continue;
+        }
+        card.domElement = document.getElementById('tpl-search-result').content.firstElementChild.cloneNode(true);
+        const e = card.domElement;
+        e.querySelector('.search-result-catg').textContent = CATG_ABBRS[card.catg] ?? capitalize(card.catg);
+        e.querySelector('.search-result-word').textContent = card.word;
+        if (card.hasImages) {
+            e.querySelector('.icon:nth-of-type(1)').classList.add('icon-image');
+            e.querySelector('.icon:nth-of-type(1)').title = 'Has image(s)';
+        }
+        if (card.hasAudio) {
+            e.querySelector('.icon:nth-of-type(2)').classList.add('icon-audio');
+            e.querySelector('.icon:nth-of-type(2)').title = 'Has audio';
+        }
+        e.onclick = () => {
+            console.log(`Rendering ${(card.isLexeme?'lexeme ':'')}entry ${card.id} for "${card.word}" (${card.catg})`);
+            renderEntryFor(card);
+        };
     }
-    e.onclick = () => {
-        console.log(`Rendering ${(card.isLexeme?'lexeme ':'')}entry ${card.id} for "${card.word}" (${card.catg})`);
-        renderEntryFor(card);
-    };
-}
-for (let card of indexL2) {
-    const entry = (card.isLexeme) ? parse.lexemes[card.id] : parse.entries[card.id];
-    if (!entry) {
-        console.error(`Index card points to ${(card.isLexeme?'lexeme ':'')}entry that doesn't exist.`, card);
-        continue;
-    }
-    card.domElement = document.getElementById('tpl-search-result').content.firstElementChild.cloneNode(true);
-    const e = card.domElement;
-    e.querySelector('.search-result-catg').textContent = CATG_ABBRS[card.catg] ?? capitalize(card.catg);
-    e.querySelector('.search-result-word').textContent = card.word;
-    if (card.hasImages) {
-        e.querySelector('.icon:nth-of-type(1)').classList.add('icon-image');
-        e.querySelector('.icon:nth-of-type(1)').title = 'Has image(s)';
-    }
-    if (card.hasAudio) {
-        e.querySelector('.icon:nth-of-type(2)').classList.add('icon-audio');
-        e.querySelector('.icon:nth-of-type(2)').title = 'Has audio';
-    }
-    e.onclick = () => {
-        console.log(`Rendering ${(card.isLexeme?'lexeme ':'')}entry ${card.id} for "${card.word}" (${card.catg})`);
-        renderEntryFor(card);
-    };
-}
-const t4_page = performance.now();
-console.log(`Search result DOM elements built in ${Math.round(t4_page-t3_page)} ms`);
+};
 
 
 
@@ -303,11 +303,12 @@ let search = {
         let pattern = RegExp.escape(search.domElement.value);
         if (search.pattern === SEARCH_PATTERN_BEGINS) pattern = `^${pattern}`;
         if (search.pattern === SEARCH_PATTERN_ENDS) pattern = `${pattern}$`;
-        const RE_PATTERN = new RegExp(pattern);
+        const RE_FRAG = new RegExp(pattern);
+        const isEmpty = (search.domElement.value === '');
         let numMatches = 0;
         if (search.toggleLang) {
             for (let card of indexL2) {
-                if (RE_PATTERN.test(card.word.toLowerCase())) {
+                if (isEmpty || RE_FRAG.test(card.word.toLowerCase())) {
                     numMatches++;
                     card.domElement.classList.remove('hidden');
                 } else {
@@ -316,7 +317,7 @@ let search = {
             }
         } else {
             for (let card of indexL1) {
-                if (RE_PATTERN.test(card.word.toLowerCase())) {
+                if (isEmpty || RE_FRAG.test(card.word.toLowerCase())) {
                     numMatches++;
                     card.domElement.classList.remove('hidden');
                 } else {
@@ -390,19 +391,35 @@ document.querySelector('#search-lang-L2').onclick = () => setSearchLang(SEARCH_L
 document.querySelector('#search-clear').onclick = () => search.clear();
 
 // quick-copy bar
-eCopyChars.textContent = '';
-for (let c of COPYABLE_CHARS) {
-    let e = document.createElement('button');
-    e.textContent = c;
-    e.title = `${MSG_COPY_CHAR} ${CHAR_PRONUNCIATION[c] ?? `[${c}]`}`;
-    e.onclick = (evt) => {
-        console.log(c);
-        search.domElement.value = search.domElement.value + c;
-        search.domElement.focus();
-        search.filter();
-    };
-    eCopyChars.appendChild(e);
-}
+const insertCharInSearchbar = (c) => {
+    console.log(c);
+    search.domElement.value = search.domElement.value + c;
+    search.domElement.focus();
+    search.filter();
+};
+const populateCopychars = () => {
+    eCopyChars.textContent = '';
+    for (let c in COPYCHARS) {
+        let e = document.createElement('button');
+        e.textContent = c;
+        e.title = `${COPYCHARS[c].msgPronunciation || `[${c}]`} ${(COPYCHARS[c].shortcuts?.length > 0) ? `${MSG_COPYCHAR_TEMPLATE} Alt+${COPYCHARS[c].shortcuts[0]}` : MSG_COPYCHAR_DEFAULT}`;
+        e.onclick = () => insertCharInSearchbar(c);
+        eCopyChars.appendChild(e);
+    }
+};
+// character insertion shortcuts
+search.domElement.addEventListener('keydown', evt => {
+    if (!altDown) return;
+    for (let c in COPYCHARS) {
+        // console.log(`${evt.key} in ${COPYCHARS[c].shortcuts}?`);
+        // console.log(`Index is ${COPYCHARS[c].shortcuts?.indexOf(evt.key)}`);
+        if (COPYCHARS[c].shortcuts?.indexOf(evt.key) === -1) continue;
+        // console.log('YES');
+        evt.preventDefault();
+        insertCharInSearchbar(c);
+        return;
+    }
+});
 
 
 
@@ -483,16 +500,48 @@ const renderEntryFor = (card) => {
 
 
 
-//// INIT ////
+//// INIT /////////////////////////////////////////////////////////////////////
 
-search.domElement.value = ''; // need to reset input text, since we can't save begins-contains-ends state
+const t0_page = performance.now();
+
+// load toolbox data
+const parse = await parser.loadDatabase();
+// console.log(parse);
+const t1_page = performance.now();
+console.log(`Data fetched in ${Math.round(t1_page-t0_page)} ms.`);
+
+// index/sort data
+indexEntries(parse);
+const t2_page = performance.now();
+console.log(`Data indexed in ${Math.round(t2_page-t1_page)} ms.`);
+indexL1.sort(indexCardSorter);
+console.log(indexL1);
+indexL2.sort(indexCardSorter);
+console.log(indexL2);
+const t3_page = performance.now();
+console.log(`Entries alphabetized in ${Math.round(t3_page-t2_page)} ms.`);
+
+// build global dynamic page elements
+populateCopychars();
+// build L1 dynamic page elems
+populateIndexDOMElementsFor(indexL1);
+search.domElement.value = ''; // need to reset input text for consistency, since we can't save begins-contains-ends state
 search.populate();
-// search.filter();
-
-const t5_page = performance.now();
+const t4_page = performance.now();
 eNumResults.textContent = `${(search.toggleLang)?indexL2.length:indexL1.length} entries`;
-eSearchTime.textContent = `Loaded in ${Math.round(t5_page-t4_page)/1000} sec`;
+eSearchTime.textContent = `Loaded in ${Math.round(t4_page-t1_page)/1000} sec`;
+
+console.log(`Dynamic content constructed in ${Math.round(t4_page-t3_page)} ms.`);
+console.log(`Page fully rendered after ${Math.round(t4_page-t0_page)} ms. (Data fetched in ${Math.round(t1_page-t0_page)} ms. Data processed and page constructed in ${Math.round(t4_page-t1_page)} ms.)`);
+
+// deferred loading
+requestAnimationFrame(() => {
+    const t5_page = performance.now();
+    // build L2 dynamic page elems
+    populateIndexDOMElementsFor(indexL2);
+    const t6_page = performance.now();
+    console.log(`${Math.round(t6_page-t5_page)} ms of work was deferred by ${Math.round(t5_page-t4_page)} ms to allow for final contentful render.`);
+    console.log(`All loading done in ${Math.round(t6_page-t0_page)} ms`);
+});
 
 
-
-console.log(`All loading done in ${Math.round(performance.now()-t0_page)} ms`);
