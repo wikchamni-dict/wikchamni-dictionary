@@ -60,6 +60,12 @@ const COPYCHARS = Object.freeze({
         msgPronunciation : `[·] makes the previous vowel twice as long.`,
     },
 });
+const CATGS = Object.freeze([
+    // catgs here will have a toggleable filter; all others will be visible under MISC
+    'n', 'v',
+    'n-theme', 'v-theme', 'v-base',
+    'prn', 'prt', 'afx',
+]);
 
 
 
@@ -82,15 +88,20 @@ const capitalizeMulti = (text='') => text.replaceAll(/(?:^|[^\w'])([a-z])/g, c =
 
 // DOM anchors
 const eCopyChars = document.querySelector('#search-copy-chars');
-const eSearchResults = document.querySelector('#search-results-wrapper');
+const eSearchResults = document.querySelector('#search-results');
 const eNumResults = document.querySelector('#search-stat-num-results');
 const eSearchTime = document.querySelector('#search-stat-time');
 const eEntryDisplay = document.querySelector('#dictionary-entry');
+const eSearchFiltersModal = document.querySelector('#search-results-wrapper > .modal');
+const eSearchFiltersCatgs = eSearchFiltersModal.querySelector('#filters-catgs');
+const eSearchFiltersCatgsAll = eSearchFiltersModal.querySelector('#filters-catgs-all');
 // reusable/object-pooled DOM elements
 const eSearchResultsStatus = Object.assign(document.createElement('p'), {
     classList : `search-results-status`,
     textContent : `No results...`
 });
+
+
 
 // audio
 let audioPlayer = {
@@ -300,29 +311,41 @@ let search = {
     },
     filter : () => {
         const t0_filter = performance.now();
+        // process search frag
         let pattern = RegExp.escape(search.domElement.value);
         if (search.pattern === SEARCH_PATTERN_BEGINS) pattern = `^${pattern}`;
         if (search.pattern === SEARCH_PATTERN_ENDS) pattern = `${pattern}$`;
         const RE_FRAG = new RegExp(pattern);
-        const isEmpty = (search.domElement.value === '');
+        // check if we can short-circuit search frag restriction
+        const needTestFrag = (search.domElement.value !== '');
+        // console.log(`Need test (non-empty) search frag? ${needTestFrag}`);
+        // check if we can short-circuit catg restrictions
+        let numCatgs = 1; // MISC + dynamic catg list
+        let numActiveCatgs = 0;
+        if (search.filters.catgsMisc.visible) numActiveCatgs++;
+        for (let catg of CATGS) {
+            numCatgs++;
+            if (search.filters.catgs[catg].visible) numActiveCatgs++;
+        }
+        const needTestCatg = (numActiveCatgs !== numCatgs);
+        // console.log(`Need test catg? ${needTestCatg}`);
+        // filter results
         let numMatches = 0;
-        if (search.toggleLang) {
-            for (let card of indexL2) {
-                if (isEmpty || RE_FRAG.test(card.word.toLowerCase())) {
-                    numMatches++;
-                    card.domElement.classList.remove('hidden');
-                } else {
-                    card.domElement.classList.add('hidden');
-                }
-            }
-        } else {
-            for (let card of indexL1) {
-                if (isEmpty || RE_FRAG.test(card.word.toLowerCase())) {
-                    numMatches++;
-                    card.domElement.classList.remove('hidden');
-                } else {
-                    card.domElement.classList.add('hidden');
-                }
+        const index = (search.toggleLang) ? indexL2 : indexL1;
+        for (let card of index) {
+            if (
+                (needTestFrag && !RE_FRAG.test(card.word.toLowerCase())) // do we match the search frag?
+                || (needTestCatg && (
+                    search.filters.catgs[card.catg] && !search.filters.catgs[card.catg].visible // are we a recognized catg that isn't active?
+                    || !search.filters.catgs[card.catg] && !search.filters.catgsMisc.visible // are we an unrecognized catg, and MISC isn't active?
+                ))
+            ) {
+                // fail
+                card.domElement.classList.add('hidden');
+            } else {
+                // pass
+                numMatches++;
+                card.domElement.classList.remove('hidden');
             }
         }
         if (numMatches === 0) {
@@ -339,7 +362,104 @@ let search = {
         search.domElement.value = '';
         search.domElement.focus();
         search.filter();
-    }
+    },
+
+    filters : {
+        catgs : (() => {
+            let o = {};
+            for (let catg of CATGS) {
+                o[catg] = {
+                    visible: true,
+                    domElement: eSearchFiltersCatgs.querySelector(`#filter-catg-${catg}`),
+                };
+            }
+            return o;
+        })(),
+        catgsMisc : {
+            visible : true,
+            domElement : eSearchFiltersCatgs.querySelector('#filter-catg-misc'),
+        },
+        toggle : (catg) => {
+            const filter = (catg === 'misc') ? search.filters.catgsMisc : search.filters.catgs[catg];
+            if (!filter) { console.error(`Catg "${catg}" not recognized. Unable to toggle filter.`); return; }
+            filter.visible = !filter.visible;
+            if (filter.visible) {
+                console.log(`Catg "${catg}" is visible`);
+            } else {
+                console.log(`Catg "${catg}" is hidden`);
+            }
+            search.filters.render();
+            search.filter();
+        },
+        setOnly : (catgActive) => {
+            if (catgActive === 'misc') {
+                search.filters.catgsMisc.visible = true;
+                for (let catg of CATGS) {
+                    search.filters.catgs[catg].visible = false;
+                }
+            } else {
+                search.filters.catgsMisc.visible = false;
+                for (let catg of CATGS) {
+                    search.filters.catgs[catg].visible = (catg === catgActive);
+                }
+            }
+            search.filters.render();
+            search.filter();
+        },
+        reset : () => {
+            for (let catg of CATGS) {
+                search.filters.catgs[catg].visible = true;
+            }
+            search.filters.catgsMisc.visible = true;
+            search.filters.render();
+            search.filter();
+        },
+        render : () => {
+            // count active catgs for smart formatting
+            let numCatgs = 1; // MISC + dynamic catg list
+            let numActiveCatgs = 0;
+            if (search.filters.catgsMisc.visible) numActiveCatgs++;
+            for (let catg of CATGS) {
+                numCatgs++;
+                if (search.filters.catgs[catg].visible) numActiveCatgs++;
+            }
+            // show/hide catgs
+            for (let catg of CATGS) {
+                if (search.filters.catgs[catg].visible) {
+                    // show if active
+                    search.filters.catgs[catg].domElement.classList.remove('inactive');
+                    if (numActiveCatgs !== numCatgs) {
+                        search.filters.catgs[catg].domElement.classList.add('active');
+                    } else {
+                        search.filters.catgs[catg].domElement.classList.remove('active');
+                    }
+                } else {
+                    // hide if inactive
+                    search.filters.catgs[catg].domElement.classList.remove('active');
+                    search.filters.catgs[catg].domElement.classList.add('inactive');
+                }
+            }
+            if (search.filters.catgsMisc.visible) {
+                // show if active
+                search.filters.catgsMisc.domElement.classList.remove('inactive');
+                if (numActiveCatgs !== numCatgs) {
+                    search.filters.catgsMisc.domElement.classList.add('active');
+                } else {
+                    search.filters.catgsMisc.domElement.classList.remove('active');
+                }
+            } else {
+                // hide if inactive
+                search.filters.catgsMisc.domElement.classList.remove('active');
+                search.filters.catgsMisc.domElement.classList.add('inactive');
+            }
+            // "Select All" button
+            if (numActiveCatgs === numCatgs) {
+                eSearchFiltersCatgsAll.classList.add('active');
+            } else {
+                eSearchFiltersCatgsAll.classList.remove('active');
+            }
+        },
+    },
 };
 search.domElement.addEventListener('input', evt => {
     search.filter();
@@ -372,6 +492,21 @@ document.querySelector('#search-pattern-contains').onclick = () => setSearchPatt
 document.querySelector('#search-pattern-ends').onclick = () => setSearchPattern(SEARCH_PATTERN_ENDS);
 
 // search actions
+const toggleSearchFiltersModal = () => {
+    // show/hide filters
+    if (eSearchFiltersModal.classList.contains('hidden')) {
+        eSearchFiltersModal.classList.remove('hidden');
+    } else {
+        eSearchFiltersModal.classList.add('hidden');
+    }
+    // focus management
+    if (eSearchFiltersModal.classList.contains('hidden')) {
+        document.querySelector('#search-filters').focus();
+    } else {
+        eSearchFiltersModal.querySelector('.modal-content').focus();
+    }
+};
+document.querySelector('#search-filters').onclick = () => toggleSearchFiltersModal();
 const setSearchLang = (useL2) => {
     if (!!useL2 === !!search.toggleLang) return;
     search.toggleLang = (useL2) ? SEARCH_LANG_L2 : SEARCH_LANG_L1;
@@ -384,6 +519,7 @@ const setSearchLang = (useL2) => {
     }
     search.domElement.value = '';
     search.populate();
+    search.filters.reset();
     // search.filter(); // unnecessary; search.populate() sets all to visible
 };
 document.querySelector('#search-lang-L1').onclick = () => setSearchLang(SEARCH_LANG_L1);
@@ -419,6 +555,49 @@ search.domElement.addEventListener('keydown', evt => {
         insertCharInSearchbar(c);
         return;
     }
+});
+
+// search filters (catgs)
+eSearchFiltersModal.querySelector('.icon-x').onclick = () => toggleSearchFiltersModal();
+eSearchFiltersModal.onclick = (evt) => {
+    if (!eSearchFiltersModal.querySelector('.modal-content').contains(evt.target)) {
+        toggleSearchFiltersModal(); // close modal if we click on its transparent background
+    }
+};
+// window.onclick = (evt) => {
+//     // prevents opening filters, since filters button opens modal first, then this fires and immediately closes it
+//     console.log(`Search filters visible? ${!eSearchFiltersModal.classList.contains('hidden')}`);
+//     if (
+//         !eSearchFiltersModal.classList.contains('hidden') // modal visible?
+//         && !eSearchFiltersModal.querySelector('.modal-content').contains(evt.target) // clicked outside content?
+//     ) {
+//         toggleSearchFiltersModal(); // close search filters modal if we click outside its content
+//     }
+// };
+eSearchFiltersModal.querySelector('#filters-catgs-all').onclick = () => search.filters.reset();
+for (let catg of CATGS) {
+    search.filters.catgs[catg].domElement.onclick = () => {
+        if (altDown) {
+            search.filters.toggle(catg);
+        } else {
+            search.filters.setOnly(catg);
+        }
+    };
+    search.filters.catgs[catg].domElement.addEventListener('contextmenu', (evt) => {
+        evt.preventDefault();
+        search.filters.toggle(catg);
+    });
+}
+search.filters.catgsMisc.domElement.onclick = () => {
+    if (altDown) {
+        search.filters.toggle('misc');
+    } else {
+        search.filters.setOnly('misc');
+    }
+};
+search.filters.catgsMisc.domElement.addEventListener('contextmenu', (evt) => {
+    evt.preventDefault();
+    search.filters.toggle('misc');
 });
 
 
@@ -491,11 +670,10 @@ const renderEntryFor = (card) => {
     // related words
     eEntryDisplay.querySelector('.entry-lexemes').textContent = '';
 
-    // TODO: display case names
     // TOOD: display lexeme / not lexeme indicator
     // TODO: display images
-    // TODO: if standard entry, display lexeme(s)
-    // TODO: if lexeme entry, L2 words link to entry (if available, else red text)
+    // TODO: in lexeme entries, link non-underlying words to standard entries (else color red)
+    // TODO: in standard entries, link underlying words to lexeme entries (else color red)
 };
 
 
@@ -523,6 +701,7 @@ console.log(`Entries alphabetized in ${Math.round(t3_page-t2_page)} ms.`);
 
 // build global dynamic page elements
 populateCopychars();
+search.filters.render();
 // build L1 dynamic page elems
 populateIndexDOMElementsFor(indexL1);
 search.domElement.value = ''; // need to reset input text for consistency, since we can't save begins-contains-ends state

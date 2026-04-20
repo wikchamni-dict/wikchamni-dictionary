@@ -114,7 +114,7 @@
 				overflow: overlay;
 			}
 			#dictionary-search button {
-				color: var(--text-dark-focus);
+				/* color: var(--text-dark-focus); */
 			}
 
 			#search-wrapper {
@@ -147,7 +147,8 @@
 				border: thin solid var(--border-medium);
 				border-radius: 0.25em;
 				padding: 0.15em 0.5em;
-				padding-right: 6em;
+				padding-left: 1.75em;
+				padding-right: 5.75em;
 				font-size: 1em;
 			}
 			#searchbar:active {
@@ -158,7 +159,30 @@
 				border: thin solid var(--highlight);
 				outline: thin solid var(--highlight);
 			}
-			#searchbar-actions {
+			#searchbar-actions-left {
+				/* border: thin solid red; */
+				/* border-right: thin solid var(--border-medium); */
+				height: 100%;
+				position: absolute;
+				left: 0;
+				/* padding-left: 0.15em; */
+				padding: 0 0.15em;
+			}
+			#search-filters {
+				color: white !important;
+				background-color: var(--highlight) !important;
+			}
+			/* #search-filters:hover {
+				background-color: var(--bg-grey-light);
+			} */
+			#search-filters:focus-visible {
+				outline: medium solid var(--dark);
+			}
+			/* #search-filters.active {
+				color: white !important;
+				background-color: var(--highlight) !important;
+			} */
+			#searchbar-actions-right {
 				/* border: thin solid red; */
 				height: 100%;
 				position: absolute;
@@ -202,12 +226,25 @@
 				background-color: var(--bg-grey-light);
 				/* border-top: var(--panel-border); */
 				/* border-bottom: var(--panel-border); */
+
+				/* padding: 0.25em;
+				overflow-x: hidden;
+				overflow-y: overlay;
+				font-size: 0.8em; */
+
+				font-size: 0.8em;
+				overflow: hidden;
+
+				position: relative; /* anchor for modal */
+			}
+			#search-results {
+				width: 100%;
+				min-height: 100%;
+				max-height: 100%;
+
 				padding: 0.25em;
 				overflow-x: hidden;
 				overflow-y: overlay;
-				font-size: 0.8em;
-
-				/* position: relative; */
 			}
 			.search-result {
 				padding: 0.3em;
@@ -245,6 +282,72 @@
 				padding: 2em 0;
 				font-size: 1.2em;
 				text-align: center;
+			}
+
+			.modal {
+				background-color: #0004;
+				width: 100%;
+				/* height: 100%; */
+				min-height: 100%;
+				max-height: 100%;
+				position: absolute;
+				top: 0;
+				left: 0;
+				padding: 2em;
+				z-index: var(--layer-front);
+			}
+			.modal-content {
+				background-color: white;
+				border-radius: 0.5em;
+				filter: var(--modal-shadow);
+				width: 100%;
+				min-height: 10em;
+				padding: 1em;
+				gap: 1.5em;
+			}
+			.modal-header {
+				border-bottom: thin solid var(--text-dark);
+				padding: 0.15em;
+			}
+			.modal-header h2 {
+				font-size: 1.25em;
+			}
+			.modal-footer {
+				color: var(--text-dark);
+				gap: 0.5em;
+			}
+			.modal-footer > p {
+				text-align: center;
+			}
+			#filters-catgs {
+				justify-content: center;
+				flex-wrap: wrap;
+				gap: 0.5em;
+			}
+			.filter-catg-bubble {
+				color: var(--highlight);
+				background-color: var(--bg-tint);
+				border: thin solid var(--highlight);
+				border-radius: 1em;
+				padding: 0.25em 1em;
+			}
+			.filter-catg-bubble:hover {
+				filter: var(--modal-shadow);
+			}
+			.filter-catg-bubble:focus-visible {
+				outline: medium solid var(--dark);
+			}
+			.filter-catg-bubble.active {
+				color: white !important;
+				background-color: var(--highlight) !important;
+			}
+			.filter-catg-bubble.inactive {
+				color: var(--text-dark);
+				background-color: var(--bg-grey-light);
+				border: thin solid var(--text-dark);
+			}
+			.filter-catg-bubble.meta {
+				border-radius: 0.25em;
 			}
 
 			#search-footer {
@@ -373,6 +476,13 @@
 				background-color: var(--primary-faded);
 			}
 
+			.icon-svg {
+				/* icon will contain <svg>, so act as flexbox to center it */
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+
 			.icon-audio {
 				background: url('./assets/images/audio.png') var(--thumbnail-position);
 			}
@@ -424,7 +534,16 @@
 						</div>
 						<div class='flex-col pos-anchor'>
 							<input id='searchbar' type='text' placeholder='Search...'>
-							<div id='searchbar-actions' class='flex-row-centered'>
+							<div id='searchbar-actions-left' class='flex-row-centered'>
+								<button id='search-filters' class='icon icon-svg' title='Search filters'>
+									<svg id='nav-hamburger' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' width='24' height='24' stroke-width='1.5'>
+										<path d='M5 8l14 0'></path>
+										<path d='M7 12l10 0'></path>
+										<path d='M9 16l6 0'></path>
+									</svg>
+								</button>
+							</div>
+							<div id='searchbar-actions-right' class='flex-row-centered'>
 								<button id='search-lang-L1' class='search-lang active' title='Search in English'>EN</button>
 								<button id='search-lang-L2' class='search-lang' title='Search in Wikchamni'>WK</button>
 								<button id='search-clear' class='icon icon-x' title='Clear search'></button>
@@ -438,27 +557,33 @@
 						</div>
 					</div>
 					<div id='search-results-wrapper' class='flex-col flex-shrink flex-grow'>
-						<!-- <div id='search-results' class='flex-col'>
-							<button class='flex-row-centered search-result active'>
-								<p class='search-result-catg'>Adj</p>
-								<p class='search-result-word'>Abblecrab</p>
-								<div class='icon icon-dbg'></div>
-								<div class='icon icon-dbg'></div>
-							</button>
-							<button class='flex-row-centered search-result'>
-								<p class='search-result-catg'>N</p>
-								<p class='search-result-word'>Cab'apple</p>
-								<div class='icon icon-dbg'></div>
-								<div class='icon icon-dbg'></div>
-							</button>
-							<button class='flex-row-centered search-result'>
-								<p class='search-result-catg'>V</p>
-								<p class='search-result-word'>Cabdab Obb</p>
-								<div class='icon icon-dbg'></div>
-								<div class='icon icon-dbg'></div>
-							</button>
-						</div> -->
-						<p class='search-results-status'>Loading...</p>
+						<div class='flex-col modal hidden'>
+							<div class='flex-col modal-content' tabindex='0' role='dialog' aria-label='Search filters'>
+								<div class='flex-row-centered flex-separated-row modal-header'>
+									<h2>Filter Catgs</h2>
+									<button id='filters-close' class='icon icon-x' title='Close search filters'></button>
+								</div>
+								<div id='filters-catgs' class='flex-row'>
+									<button id='filter-catg-n' class='filter-catg-bubble'>N</button>
+									<button id='filter-catg-v' class='filter-catg-bubble'>V</button>
+									<button id='filter-catg-n-theme' class='filter-catg-bubble'>N-theme</button>
+									<button id='filter-catg-v-theme' class='filter-catg-bubble'>V-theme</button>
+									<button id='filter-catg-v-base' class='filter-catg-bubble'>V-base</button>
+									<button id='filter-catg-prn' class='filter-catg-bubble'>Prn</button>
+									<button id='filter-catg-prt' class='filter-catg-bubble'>Prt</button>
+									<button id='filter-catg-afx' class='filter-catg-bubble'>Afx</button>
+									<button id='filter-catg-misc' class='filter-catg-bubble'>MISC</button>
+								</div>
+								<div class='flex-col modal-footer'>
+									<button id='filters-catgs-all' class='filter-catg-bubble meta active'>ALL</button>
+									<p>Click or tap to select only one.</p>
+									<p>Alt+Click or longpress to toggle, for selecting multiple.</p>
+								</div>
+							</div>
+						</div>
+						<div id='search-results' class='flex-col'>
+							<p class='search-results-status'>Loading...</p>
+						</div>
 					</div>
 					<div id='search-footer' class='flex-separated-row'>
 						<p id='search-stat-num-results'>0/0 entries</p>
