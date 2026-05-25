@@ -96,9 +96,33 @@
 
 			#content {
 				color: var(--text-dark-focus);
+				width: 100vw; /* fallback for older browsers */
+				width: 100dvw;
+				overflow-x: hidden;
 			}
 
 
+
+			#search-goto-entry {
+				padding: 0.5em;
+				gap: 0.25em;
+			}
+			#entry-goto-search {
+				background-color: var(--bg-grey);
+				border-top: thin solid var(--border-medium);
+				padding: 0.5em;
+				position: sticky;
+				bottom: 0;
+			}
+			.goto-button {
+				color: white;
+				background-color: var(--highlight);
+				padding: 0.5em;
+				text-align: center;
+			}
+			.goto-button:focus-visible {
+				outline: medium solid black !important;
+			}
 
 			/**** SEARCH ****/
 
@@ -106,15 +130,17 @@
 				/* color: var(--text-dark); */
 				background-color: var(--bg-grey);
 				border-right: var(--panel-border);
-				width: var(--search-panel-width);
-				height: calc(100vh - var(--navbar-height));
 				position: fixed;
 				top: var(--navbar-height);
 				left: 0;
 				overflow: overlay;
-			}
-			#dictionary-search button {
-				/* color: var(--text-dark-focus); */
+
+				min-width: 10em;
+				height: calc(100vh - var(--navbar-height)); /* fallback for older browsers */
+				height: calc(100dvh - var(--navbar-height));
+
+				/* mobile mode */
+				width: 100%;
 			}
 
 			#search-wrapper {
@@ -146,7 +172,7 @@
 			#searchbar {
 				border: thin solid var(--border-medium);
 				border-radius: 0.25em;
-				padding: 0.15em 0.5em;
+				padding: 0.15em;
 				padding-left: 1.75em;
 				padding-right: 5.75em;
 				font-size: 1em;
@@ -160,21 +186,15 @@
 				outline: thin solid var(--highlight);
 			}
 			#searchbar-actions-left {
-				/* border: thin solid red; */
-				/* border-right: thin solid var(--border-medium); */
 				height: 100%;
 				position: absolute;
 				left: 0;
-				/* padding-left: 0.15em; */
 				padding: 0 0.15em;
 			}
 			#search-filters {
 				color: white !important;
 				background-color: var(--highlight) !important;
 			}
-			/* #search-filters:hover {
-				background-color: var(--bg-grey-light);
-			} */
 			#search-filters:focus-visible {
 				outline: medium solid var(--dark);
 			}
@@ -183,7 +203,6 @@
 				background-color: var(--highlight) !important;
 			} */
 			#searchbar-actions-right {
-				/* border: thin solid red; */
 				height: 100%;
 				position: absolute;
 				right: 0;
@@ -192,7 +211,6 @@
 			.search-lang {
 				color: var(--highlight) !important;
 				background-color: transparent;
-				width: 1.5em;
 				width: 2em;
 			}
 			.search-lang.active {
@@ -224,17 +242,8 @@
 
 			#search-results-wrapper {
 				background-color: var(--bg-grey-light);
-				/* border-top: var(--panel-border); */
-				/* border-bottom: var(--panel-border); */
-
-				/* padding: 0.25em;
-				overflow-x: hidden;
-				overflow-y: overlay;
-				font-size: 0.8em; */
-
-				font-size: 0.8em;
+				font-size: 0.9em;
 				overflow: hidden;
-
 				position: relative; /* anchor for modal */
 			}
 			#search-results {
@@ -353,7 +362,7 @@
 			#search-footer {
 				color: var(--text-dark);
 				border-top: var(--panel-border);
-				padding: 0.3em;
+				padding: 0.25em 0.8em;
 				font-size: 0.8em;
 			}
 
@@ -362,27 +371,34 @@
 			/**** ENTRY DISPLAY ****/
 
 			#dictionary-entry {
+				background-color: white;
 				position: relative;
 				margin-top: var(--navbar-height);
-				margin-left: var(--search-panel-width);
-				padding: 1em;
-				gap: 2em;
+				width: 100%;
 				overflow: overlay;
+
+				left: 100%;
+				transition: left 0.25s;
+
+				height: calc(100vh - var(--navbar-height));
+				height: calc(100dvh - var(--navbar-height));
+			}
+			#dictionary-entry.focus {
+				left: 0;
 			}
 
+			#entry-content {
+				padding: 1em;
+				gap: 2em;
+				flex-grow: 1;
+			}
 			.entry-header {
 				border-bottom: thin solid var(--text-dark);
 				padding: 0.5em;
 				flex-wrap: wrap;
-
-				/* mobile */
-				/* gap: 0.25em; */
-				/* align-items: start; */
-
-				/* desktop */
-				gap: 1em;
-				align-items: baseline;
-				justify-content: start;
+				/* mobile spacing */
+				gap: 0.25em;
+				align-items: start;
 			}
 			.entry-L1 {
 				font-size: 1.7em;
@@ -398,7 +414,7 @@
 			}
 			.entry-words {
 				gap: 0.8em;
-				padding: 0 2em;
+				padding: 0 1em;
 			}
 			.entry-L2 {
 				gap: 1em;
@@ -416,7 +432,7 @@
 
 
 			.entry-examples {
-				padding: 0 2em;
+				padding: 0 1em;
 				gap: 1em;
 			}
 			.entry-example {
@@ -460,7 +476,6 @@
 			/**** ICONOGRAHPY ****/
 
 			.icon {
-				/* border: thin solid red; */
 				--pad: 0.1em;
 				border-radius: 0.25em;
 				width: calc(1em + 2 * var(--pad));
@@ -512,6 +527,39 @@
 				background-color: red;
 			}
 
+
+
+			/**** DESKTOP MODE OVERRIDES ****/
+
+			@media (min-aspect-ratio: 5/4) { /* desktop mode */
+				#search-goto-entry, #entry-goto-search {
+					display: none;
+				}
+				#dictionary-search {
+					width: var(--search-panel-width);
+				}
+				#search-results-wrapper {
+					font-size: 0.8em;
+				}
+
+				#dictionary-entry {
+					margin-left: var(--search-panel-width);
+					left: 0;
+					height: auto;
+				}
+				.entry-header {
+					gap: 1em;
+					align-items: baseline;
+					justify-content: start;
+				}
+				.entry-words {
+					padding: 0 2em;
+				}
+				.entry-examples {
+					padding: 0 2em;
+				}
+			}
+
 		</style>
 	</head>
 	<body>
@@ -525,7 +573,7 @@
 			</nav>
 
 			<div id='content' class='flex-row flex-grow'>
-				<section id='dictionary-search' class='flex-col' aria-label='Dictionary search'>
+				<section id='dictionary-search' class='flex-col' tabindex='0' aria-label='Dictionary search'>
 					<div id='search-wrapper' class='flex-col'>
 						<div id='search-patterns' class='flex-row flex-centered'>
 							<button id='search-pattern-begins' class='active'>Begins</button>
@@ -589,50 +637,59 @@
 						<p id='search-stat-num-results'>0/0 entries</p>
 						<p id='search-stat-time'>0.000 sec</p>
 					</div>
+					<div id='search-goto-entry' class='flex-col'>
+						<p>Go to entry:</p>
+						<button class='goto-button'>blackberry</button>
+					</div>
 				</section>
 
-				<section id='dictionary-entry' class='flex-col flex-grow flex-shrink' aria-label='Dictionary entry'>
-					<div class='flex-adapt entry-header'>
-						<h2 class='entry-L1'>English Word</h2>
-						<p class='entry-catg'>catg</p>
-						<p class='entry-headword'>Headword</p>
-					</div>
-					<div class='flex-col entry-words'>
-						<div class='flex-row-centered entry-L2'>
-							<p class='entry-L2-form'>UNDERLYING</p>
-							<p class='entry-L2-word flex-shrink'>Wikchamni Word</p>
-							<button class='icon icon-audio'></button>
+				<section id='dictionary-entry' class='flex-col flex-grow flex-shrink' tabindex='0' aria-label='Dictionary entry'>
+					<div id='entry-content' class='flex-col'>
+						<div class='flex-adapt entry-header'>
+							<h2 class='entry-L1'>English Word</h2>
+							<p class='entry-catg'>catg</p>
+							<p class='entry-headword'>Headword</p>
 						</div>
-						<div class='flex-row-centered entry-L2'>
-							<p class='entry-L2-form'>Casename</p>
-							<p class='entry-L2-word flex-shrink'>Wikchamni Word longusthemost which wraps the screen a bunch 'n stuff</p>
-							<button class='icon icon-audio'></button>
-						</div>
-					</div>
-					<div class='flex-col entry-examples'>
-						<div class='flex-col entry-example'>
-							<div class='flex-row-centered'>
-								<p class='entry-example-L2'>Wikchamni sentence translation.</p>
+						<div class='flex-col entry-words'>
+							<div class='flex-row-centered entry-L2'>
+								<p class='entry-L2-form'>UNDERLYING</p>
+								<p class='entry-L2-word flex-shrink'>Wikchamni Word</p>
 								<button class='icon icon-audio'></button>
 							</div>
-							<p class='entry-example-L1'>English example sentence.</p>
-						</div>
-						<div class='flex-col entry-example'>
-							<div class='flex-row-centered'>
-								<p class='entry-example-L2'>Wikchamni translation of sentence that is really long and might wrap the screen on smaller devices.</p>
+							<div class='flex-row-centered entry-L2'>
+								<p class='entry-L2-form'>Casename</p>
+								<p class='entry-L2-word flex-shrink'>Wikchamni Word longusthemost which wraps the screen a bunch 'n stuff</p>
 								<button class='icon icon-audio'></button>
 							</div>
-							<p class='entry-example-L1'>English example sentence that is really long and might wrap the screen on smaller devices.</p>
+						</div>
+						<div class='flex-col entry-examples'>
+							<div class='flex-col entry-example'>
+								<div class='flex-row-centered'>
+									<p class='entry-example-L2'>Wikchamni sentence translation.</p>
+									<button class='icon icon-audio'></button>
+								</div>
+								<p class='entry-example-L1'>English example sentence.</p>
+							</div>
+							<div class='flex-col entry-example'>
+								<div class='flex-row-centered'>
+									<p class='entry-example-L2'>Wikchamni translation of sentence that is really long and might wrap the screen on smaller devices.</p>
+									<button class='icon icon-audio'></button>
+								</div>
+								<p class='entry-example-L1'>English example sentence that is really long and might wrap the screen on smaller devices.</p>
+							</div>
+						</div>
+						<div class='flex-col entry-lexemes'>
+							<h3>Related words:</h3>
+							<div class='flex-row entry-lexeme'>
+								<span class='no-wrap'>Synonym 1</span>, <span class='no-wrap'>Synonym 2</span>, <span class='no-wrap'>Synonym 3</span>
+							</div>
+							<div class='flex-row entry-lexeme'>
+								<span class='no-wrap'>Synonym 1</span>, <span class='no-wrap'>Synonym 2</span>, <span class='no-wrap'>Synonym 3</span>
+							</div>
 						</div>
 					</div>
-					<div class='flex-col entry-lexemes'>
-						<h3>Related words:</h3>
-						<div class='flex-row entry-lexeme'>
-							<span class='no-wrap'>Synonym 1</span>, <span class='no-wrap'>Synonym 2</span>, <span class='no-wrap'>Synonym 3</span>
-						</div>
-						<div class='flex-row entry-lexeme'>
-							<span class='no-wrap'>Synonym 1</span>, <span class='no-wrap'>Synonym 2</span>, <span class='no-wrap'>Synonym 3</span>
-						</div>
+					<div id='entry-goto-search' class='flex-col'>
+						<button class='goto-button'>Back to Search</button>
 					</div>
 				</section>
 			</div>

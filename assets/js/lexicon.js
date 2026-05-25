@@ -92,6 +92,7 @@ const eSearchResults = document.querySelector('#search-results');
 const eNumResults = document.querySelector('#search-stat-num-results');
 const eSearchTime = document.querySelector('#search-stat-time');
 const eEntryDisplay = document.querySelector('#dictionary-entry');
+const eSearchDisplay = document.querySelector('#dictionary-search');
 const eSearchFiltersModal = document.querySelector('#search-results-wrapper > .modal');
 const eSearchFiltersCatgs = eSearchFiltersModal.querySelector('#filters-catgs');
 const eSearchFiltersCatgsAll = eSearchFiltersModal.querySelector('#filters-catgs-all');
@@ -248,6 +249,7 @@ const populateIndexDOMElementsFor = (index) => {
         e.onclick = () => {
             console.log(`Rendering ${(card.isLexeme?'lexeme ':'')}entry ${card.id} for "${card.word}" (${card.catg})`);
             renderEntryFor(card);
+            focusEntry();
         };
     }
 };
@@ -676,6 +678,24 @@ const renderEntryFor = (card) => {
     // TODO: in standard entries, link underlying words to lexeme entries (else color red)
 };
 
+const focusEntry = () => {
+    eEntryDisplay.classList.add('focus');
+    eEntryDisplay.focus();
+}
+const focusSearch = () => {
+    if (eEntryDisplay.classList.contains('focus')) {
+        eEntryDisplay.classList.remove('focus');
+        eSearchDisplay.focus();
+    } else {
+        // entryDisplay rarely gets stuck open in mobile mode if searchDisplay.focus() fails to transfer focus out of panel
+        // unknown how to prevent entirely, since failures are dependent on browser implementation and device lag
+        // failure does not give error, so we must rely on fact that button isn't clickable unless focus transfer failed
+        // re-adding and re-removing activation class with two separate user actions resets panel (chaining and requestAnimationFrame() don't trigger refresh)
+        eEntryDisplay.classList.add('focus');
+        console.log('entry got stuck open; performed reset');
+    }
+};
+
 
 
 //// INIT /////////////////////////////////////////////////////////////////////
@@ -702,6 +722,8 @@ console.log(`Entries alphabetized in ${Math.round(t3_page-t2_page)} ms.`);
 // build global dynamic page elements
 populateCopychars();
 search.filters.render();
+eSearchDisplay.querySelector('#search-goto-entry .goto-button').onclick = focusEntry;
+eEntryDisplay.querySelector('#entry-goto-search .goto-button').onclick = focusSearch;
 // build L1 dynamic page elems
 populateIndexDOMElementsFor(indexL1);
 search.domElement.value = ''; // need to reset input text for consistency, since we can't save begins-contains-ends state
