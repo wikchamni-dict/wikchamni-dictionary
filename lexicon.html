@@ -65,7 +65,6 @@
 			#navbar {
 				color: var(--text-light);
 				background-color: var(--dark);
-				/* border-bottom: thin solid var(--primary-faded); */
 				z-index: var(--layer-nav);
 				font-size: 1em;
 				width: 100%;
@@ -75,11 +74,99 @@
 				position: fixed;
 				top: 0;
 				left: 0;
-				/* gap: 1em; */
 			}
 			#navbar > h1 {
 				color: var(--text-light-focus);
 				font-size: 1.3em;
+			}
+			#navbar > button {
+				color: white;
+				width: 2.7em;
+				height: 100%;
+				/* flex-centered by default */
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			#navbar > button:hover {
+				background-color: #fff1;
+			}
+			#navbar > button > svg {
+				width: 2em;
+				height: 2em;
+			}
+			#navbar > button:focus-visible > svg {
+				outline: medium solid white;
+			}
+
+			#nav-adaptive-wrapper {
+				background-color: #0008;
+
+				width: 100%;
+				height: calc(100vh - var(--navbar-height)); /*  fallback for legacy browsers w/o dynamic viewport units */
+				height: calc(100dvh - var(--navbar-height));
+				position: absolute;
+				top: 100%;
+				left: 0;
+			}
+			#nav-adaptive-wrapper ul {
+				background-color: var(--dark);
+				border-top: thin solid #fff6;
+				list-style: none;
+				width: min(100%, 12em);
+				height: 100%;
+				align-self: end;
+			}
+
+			#nav-adaptive-wrapper ul > li {
+				width: 100%;
+			}
+			#nav-adaptive-wrapper ul > li:hover {
+				background-color: #fff1;
+			}
+			#nav-adaptive-wrapper ul > li:focus-visible {
+				outline: none;
+			}
+			#nav-adaptive-wrapper ul > li.active, #nav-adaptive-wrapper ul > li.active > p {
+				color: white !important;
+				background-color: #fff2 !important;
+			}
+			#nav-adaptive-wrapper ul > li > a, #nav-adaptive-wrapper ul > li > p {
+				color: var(--text-light);
+				border: medium solid transparent;
+				width: 100%;
+				height: 100%;
+				padding: 0.5em 1em;
+				text-align: center;
+				text-decoration: none;
+				
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			#nav-adaptive-wrapper ul > li > a:focus-visible {
+				border: medium solid white;
+				outline: none;
+			}
+
+			#nav-close {
+				padding-top: 2em;
+				flex-grow: 1;
+			}
+			#nav-close > button {
+				--w: 2.5em;
+				background-color: var(--bg-medium);
+				border: thin solid var(--border-grey);
+				border-radius: 100%;
+				width: var(--w);
+				height: var(--w);
+			}
+			#nav-close > button:hover {
+				background-color: var(--bg-medium-lighter);
+				border: thin solid var(--text-light);
+			}
+			#nav-close > button:focus-visible {
+				outline: medium solid var(--text-light);
 			}
 
 
@@ -532,6 +619,23 @@
 			/**** DESKTOP MODE OVERRIDES ****/
 
 			@media (min-aspect-ratio: 5/4) { /* desktop mode */
+				#nav-adaptive-wrapper {
+					background-color: transparent;
+
+					width: fit-content;
+					height: 100%;
+					position: static;
+					top: 100%;
+					left: 0;
+				}
+				#nav-adaptive-wrapper ul {
+					border: none;
+					padding: 0;
+				}
+				#nav-adaptive-wrapper ul > li {
+					width: fit-content;
+				}
+
 				#search-goto-entry, #entry-goto-search {
 					display: none;
 				}
@@ -569,7 +673,21 @@
 			<nav id='navbar' class='flex-row-centered' role='navigation' aria-label='Top Level'>
 				<h1>Wikchamni Dictionary</h1>
 				<div class='flex-sep'></div>
-				<p>Nav Links</p>
+				<div id='nav-adaptive-wrapper' class='flex-adapt'>
+					<ul class='flex-adapt'>
+						<li><a href='./'>Home</a></li>
+						<li><a href='./about'>About</a></li>
+						<li><a href='./language'>Language</a></li>
+						<li class='active'><p>Lexicon</p></li>
+					</ul>
+				</div>
+				<button id='nav-menu-target' class='mobile-only' title='Expand and collapse menu' aria-expanded='false'>
+					<svg id='nav-hamburger' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' width='24' height='24' stroke-width='1.5'>
+						<path d='M5 8l14 0'></path>
+						<path d='M5 12l14 0'></path>
+						<path d='M5 16l14 0'></path>
+					</svg>
+				</button>
 			</nav>
 
 			<div id='content' class='flex-row flex-grow'>
@@ -722,6 +840,25 @@
 		</template>
 
 		<!-- scripts -->
+		<script type='text/javascript'>
+			//// NAV MENU ////
+			const eNavMenu = document.querySelector('#nav-adaptive-wrapper');
+			const eNavTarget = document.querySelector('#nav-menu-target');
+			eNavMenu.onclick = (evt) => {
+				if (!document.querySelector('#nav-adaptive-wrapper > ul').contains(evt.target)) {
+					eNavMenu.style.display = 'none';
+				}
+			};
+			eNavTarget.onclick = (evt) => {
+				eNavMenu.style.display = (eNavMenu.style.display === 'none') ? '' : 'none';
+			};
+			// force hidden in mobile mode, force visible in desktop mode
+			window.addEventListener('resize', evt => {
+				eNavMenu.style.display = (window.innerWidth/window.innerHeight > 5/4) ? '' : 'none';
+			});
+			// on mobile, nav shouldn't be open on page load
+			if (window.innerWidth/window.innerHeight < 5/4) eNavMenu.style.display= 'none';
+		</script>
 		<script type='module' src='assets/js/parse-toolbox-output.js'></script>
 		<script type='module' src='assets/js/lexicon.js'></script>
 
