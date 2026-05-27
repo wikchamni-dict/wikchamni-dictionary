@@ -6,7 +6,8 @@ FLAG_VERBOSE = True
 INPUT = 'Wikchamni Dictionary update 8-09-26'
 # INPUT = 'toolbox-output-clean.txt' # re-run script on output to verify that it is a projection (no further mutation on subsequent runs)
 OUTPUT = 'toolbox-output-clean.txt'
-DIR_MEDIA = 'assets\\media'
+# DIR_MEDIA = 'assets\\data\\media'
+DIR_MEDIA = 'media'
 
 RE_PID_FILEPATH = re.compile(r'^(.*)[A-Za-z]:[^\n]*(\\[^\\\n]+)$') # good enough for now, since no datafield contains more than one filepath and all files are stored in the same directory
 RE_TOKEN = re.compile(r'^\\([^\s]+)(?: ([^\n]*))?$')
@@ -59,6 +60,7 @@ with open(INPUT, 'r', encoding='utf-8') as file_in:
         match = RE_PID_FILEPATH.match(line)
         if not match: continue
         marker,filename = match.groups()
+        filename = re.sub('.wav','.mp3',filename) # audio gets converted wav->mp3, so reflect that change here
         if FLAG_VERBOSE: print(f'From "{line}"')
         if FLAG_VERBOSE: print(f'To "{marker}{DIR_MEDIA}{filename}"')
         lines[i] = f'{marker}{DIR_MEDIA}{filename}'

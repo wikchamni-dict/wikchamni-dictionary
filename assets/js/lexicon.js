@@ -107,11 +107,10 @@ const eSearchResultsStatus = Object.assign(document.createElement('p'), {
 // audio
 let audioPlayer = {
 	player : document.createElement('audio'),
-	projectPath : '', // leave blank to use relative paths
 	play : (src) => {
-		console.log(`Playing audio "${audioPlayer.projectPath}/${src}"`);
+		console.log(`Playing audio ".\\${src}"`);
 		audioPlayer.player.pause();
-		audioPlayer.player.src = `${audioPlayer.projectPath}/${src}`;
+        audioPlayer.player.src = `./${src}`;
 		audioPlayer.player.play();
 	}
 };
@@ -634,6 +633,7 @@ const renderEntryFor = (card) => {
                             title : audio || '[blank or missing audio]',
                             onclick : () => {
                                 console.log(`Play audio "${audio}"`);
+                                audioPlayer.play(audio);
                             }
                         })
                     );
@@ -659,6 +659,7 @@ const renderEntryFor = (card) => {
                             title : audio || '[blank or missing audio]',
                             onclick : () => {
                                 console.log(`Play audio "${audio}"`);
+                                audioPlayer.play(audio);
                             }
                         })
                     );
