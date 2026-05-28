@@ -96,6 +96,7 @@ const eSearchDisplay = document.querySelector('#dictionary-search');
 const eSearchFiltersModal = document.querySelector('#search-results-wrapper > .modal');
 const eSearchFiltersCatgs = eSearchFiltersModal.querySelector('#filters-catgs');
 const eSearchFiltersCatgsAll = eSearchFiltersModal.querySelector('#filters-catgs-all');
+const eSearchGotoEntryButton = document.querySelector('#search-goto-entry > .goto-button');
 // reusable/object-pooled DOM elements
 const eSearchResultsStatus = Object.assign(document.createElement('p'), {
     classList : `search-results-status`,
@@ -247,6 +248,7 @@ const populateIndexDOMElementsFor = (index) => {
         }
         e.onclick = () => {
             console.log(`Rendering ${(card.isLexeme?'lexeme ':'')}entry ${card.id} for "${card.word}" (${card.catg})`);
+            eSearchGotoEntryButton.textContent = card.word;
             renderEntryFor(card);
             focusEntry();
         };
@@ -725,10 +727,29 @@ populateCopychars();
 search.filters.render();
 eSearchDisplay.querySelector('#search-goto-entry .goto-button').onclick = focusEntry;
 eEntryDisplay.querySelector('#entry-goto-search .goto-button').onclick = focusSearch;
-// build L1 dynamic page elems
+// build L1 dynamic page elems and load initial entry
 populateIndexDOMElementsFor(indexL1);
 search.domElement.value = ''; // need to reset input text for consistency, since we can't save begins-contains-ends state
 search.populate();
+// load initial entry
+    // straw grass (acc) č'akši [3 forms, 1 sent]
+    // clover č'it'at' [2 forms, 2 sents]
+    // digging roots (dur pres) hopʰtat [2 forms, 2 sents]
+    // mountain balm (cons adju) kiṭ'inʔiy [2 forms, 1 sent]
+    // baskets (acc) k'ač'iwhat [2 forms, 2 sents]
+    // weaving (neutral v n acc) tixta [2 forms, 2 sents]
+    // elderberry (abs) wiše·tʰaʔ [2 forms, 1 sent]
+for (let i = 0; i < indexL1.length; i++) {
+    // toolbox output may shuffle order of entries and does not provide id numbers
+    // only way to reliably target an entry is to manually search for it
+    // the word "clover" is chosen for its unambiguity: only one entry currently has L1 "clover" and an example with audio
+    if (indexL1[i].word == 'clover' && indexL1[i].hasAudio) {
+        console.log(`Loading initial entry "${indexL1[i].word}" (${indexL1[i].catg}) id ${indexL1[i].id}`);
+        eSearchGotoEntryButton.textContent = indexL1[i].word;
+        renderEntryFor(indexL1[i]);
+        break;
+    }
+}
 const t4_page = performance.now();
 eNumResults.textContent = `${(search.toggleLang)?indexL2.length:indexL1.length} entries`;
 eSearchTime.textContent = `Loaded in ${Math.round(t4_page-t1_page)/1000} sec`;
