@@ -3,7 +3,8 @@
 	<head>
 		<title>Wikchamni Dictionary</title>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<!-- <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" /> -->
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="manifest" href="assets/favicons/manifest.json"/>
 		<link rel="apple-touch-icon" href="assets/favicons/apple-touch-icon.png"/>
 		<link rel="icon" type="image/png" href="assets/favicons/android-chrome-512x512.png" sizes="512x512"/>
@@ -29,6 +30,7 @@
 
 				--primary-faded: #666f99;
 				--highlight: #2f91ff;
+				/* --highlight: #428bca; */
 				--highlight-dark: #113366ff;
 				--bg-tint: #2f91ff22;
 
@@ -37,6 +39,7 @@
 				--bg-grey-light: #f4f4fb;
 
 				--text-dark: #00000088;
+				--text-dark: #000000aa;
 				--text-dark-focus: #000000ee;
 				--text-light: #ffffffb3;
 				--text-light-focus: #ffffffee;
@@ -229,39 +232,47 @@
 				/* mobile mode */
 				width: 100%;
 			}
+			#dictionary-search:focus-visible {
+				box-shadow: 3px 3px var(--highlight) inset, -3px -3px var(--highlight) inset;
+			}
 
 			#search-wrapper {
 				border-bottom: var(--panel-border);
-				padding: 0.3em;
-				gap: 0.3em;
 			}
-			#search-patterns {
-				gap: 0.5em;
-			}
+
 			#search-patterns > button {
 				color: var(--text-dark);
-				width: 4em;
 				font-size: 0.8em;
 			}
-			#search-patterns > button:hover {
+			#search-patterns > button > span {
+				display: inline-block;
+				width: 5em;
+				padding: 0.1em;
+				margin: 0.2em;
+			}
+			#search-patterns > button:hover > span {
 				color: var(--text-dark-focus);
 				text-decoration: underline;
 			}
 			#search-patterns > button:focus-visible {
 				outline: medium solid black !important;
 			}
-			#search-patterns > button.active {
+			#search-patterns > button.active > span {
 				color: var(--text-dark-focus);
+				/* box-shadow: 0 3px 0 var(--highlight); */
 				border-bottom: medium solid var(--highlight);
 				text-decoration: none;
 			}
 
+			#search-wrapper > .pos-anchor {
+				margin: 0 0.3em;
+			}
 			#searchbar {
 				border: thin solid var(--border-medium);
 				border-radius: 0.25em;
 				padding: 0.15em;
 				padding-left: 1.75em;
-				padding-right: 5.75em;
+				padding-right: 6em;
 				font-size: 1em;
 			}
 			#searchbar:active {
@@ -278,53 +289,70 @@
 				left: 0;
 				padding: 0 0.15em;
 			}
+			#searchbar-actions-left > button {
+				height: 100%;
+			}
 			#search-filters {
 				color: white !important;
+			}
+			#search-filters > svg {
 				background-color: var(--highlight) !important;
+				border-radius: 0.2em;
 			}
 			#search-filters:focus-visible {
 				outline: medium solid var(--dark);
 			}
-			/* #search-filters.active {
-				color: white !important;
-				background-color: var(--highlight) !important;
-			} */
+			#search-filters:hover> svg {
+				color: var(--bg-tint);
+				/* outline: thin solid var(--highlight-dark); */
+				/* background-color: var(--highlight-dark) !important; */
+			}
 			#searchbar-actions-right {
+				/* border: thin solid transparent; */
 				height: 100%;
 				position: absolute;
 				right: 0;
 				padding-right: 0.15em;
 			}
-			.search-lang {
+			#searchbar-actions-right > button {
+				height: 100%;
+			}
+			.search-lang > span {
 				color: var(--highlight) !important;
 				background-color: transparent;
+				display: inline-block;
 				width: 2em;
 			}
-			.search-lang.active {
+			.search-lang.active > span {
 				color: white !important;
 				background-color: var(--highlight) !important;
 			}
-			.search-lang:hover {
+			.search-lang:hover > span {
 				background-color: var(--bg-grey-light);
 			}
 			.search-lang:focus-visible {
 				outline: medium solid var(--dark);
 			}
-			#search-clear:hover {
+			#search-clear {
+				width: 1.5em;
+			}
+			#search-clear:hover > .icon-x {
 				background-color: var(--bg-grey-light);
 			}
 			#search-copy-chars {
 				flex-wrap: wrap;
 			}
 			#search-copy-chars > button {
-				border-radius: 0.25em;
-				padding: 0 0.5em;
+				/* Safari browser will style button as link if color is inherited; must explicitly override on element */
+				color: var(--text-dark-focus);
+				padding: 0.15em 0.5em;
 			}
 			#search-copy-chars > button:hover {
 				background-color: var(--bg-grey-light);
 			}
 			#search-copy-chars > button:focus-visible {
 				outline: medium solid black;
+				z-index: var(--layer-front);
 			}
 
 			#search-results-wrapper {
@@ -343,6 +371,8 @@
 				overflow-y: overlay;
 			}
 			.search-result {
+				/* Safari browser will style button as link if color is inherited; must explicitly override on element */
+				color: var(--text-dark-focus);
 				padding: 0.3em;
 				padding-left: 0.25em;
 				gap: 0.2em;
@@ -391,6 +421,7 @@
 				left: 0;
 				padding: 2em;
 				z-index: var(--layer-front);
+				overflow: overlay;
 			}
 			.modal-content {
 				background-color: white;
@@ -407,6 +438,12 @@
 			}
 			.modal-header h2 {
 				font-size: 1.25em;
+			}
+			.modal-header .icon-x {
+				font-size: 1.2em;
+			}
+			.modal-header .icon-x:hover {
+				background-color: var(--bg-grey-light);
 			}
 			.modal-footer {
 				color: var(--text-dark);
@@ -426,6 +463,9 @@
 				border: thin solid var(--highlight);
 				border-radius: 1em;
 				padding: 0.25em 1em;
+				/* prevent safari browser from selecting text instead of clicking button */
+				user-select: none;
+				-webkit-user-select: none;
 			}
 			.filter-catg-bubble:hover {
 				filter: var(--modal-shadow);
@@ -473,6 +513,9 @@
 			#dictionary-entry.focus {
 				left: 0;
 			}
+			#dictionary-entry:focus-visible {
+				box-shadow: 3px 3px var(--highlight) inset, -3px -3px var(--highlight) inset;
+			}
 
 			#entry-content {
 				padding: 1em;
@@ -516,6 +559,12 @@
 			.entry-L2-word {
 				font-size: 1em;
 			}
+			/* .entry-L2 .icon-audio {
+				padding: 0.2em;
+			} */
+			.entry-L2 .icon-audio:hover {
+				background-color: var(--bg-grey-light);
+			}
 
 
 			.entry-examples {
@@ -539,6 +588,12 @@
 			.entry-example > .flex-row-centered > p {
 				/* flex-row wrapper changes flex axis */
 				flex-shrink: 1;
+			}
+			/* .entry-example .icon-audio {
+				padding: 0.2em;
+			} */
+			.entry-example .icon-audio:hover {
+				background-color: white;
 			}
 
 			.entry-lexemes {
@@ -673,36 +728,36 @@
 			<nav id='navbar' class='flex-row-centered' role='navigation' aria-label='Top Level'>
 				<h1>Wikchamni Dictionary</h1>
 				<div class='flex-sep'></div>
-				<div id='nav-adaptive-wrapper' class='flex-adapt'>
-					<ul class='flex-adapt'>
-						<li><a href='./'>Home</a></li>
-						<li><a href='./about'>About</a></li>
-						<li><a href='./language'>Language</a></li>
-						<li class='active'><p>Lexicon</p></li>
-					</ul>
-				</div>
 				<button id='nav-menu-target' class='mobile-only' title='Expand and collapse menu' aria-expanded='false'>
-					<svg id='nav-hamburger' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' width='24' height='24' stroke-width='1.5'>
+					<svg id='nav-hamburger' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' width='24' height='24' stroke-width='1.5' aria-hidden='true'>
 						<path d='M5 8l14 0'></path>
 						<path d='M5 12l14 0'></path>
 						<path d='M5 16l14 0'></path>
 					</svg>
 				</button>
+				<div id='nav-adaptive-wrapper' class='flex-adapt'>
+					<ul class='flex-adapt'>
+						<li><a href='./'>Home</a></li>
+						<li><a href='./about'>About</a></li>
+						<li><a href='./language'>Language</a></li>
+						<li class='active' aria-label='Current page is'><p>Lexicon</p></li>
+					</ul>
+				</div>
 			</nav>
 
-			<div id='content' class='flex-row flex-grow'>
+			<main id='content' class='flex-row flex-grow'>
 				<section id='dictionary-search' class='flex-col' tabindex='0' aria-label='Dictionary search'>
 					<div id='search-wrapper' class='flex-col'>
-						<div id='search-patterns' class='flex-row flex-centered'>
-							<button id='search-pattern-begins' class='active'>Begins</button>
-							<button id='search-pattern-contains'>Contains</button>
-							<button id='search-pattern-ends'>Ends</button>
+						<div id='search-patterns' class='flex-row flex-centered' role='radiogroup' aria-label='Search type'>
+							<button id='search-pattern-begins' class='active' role='radio' aria-checked='true' aria-label='Search for words beginning with x'><span aria-hidden='true'>Begins</span></button>
+							<button id='search-pattern-contains' role='radio' aria-checked='false' aria-label='Search for words containing x'><span aria-hidden='true'>Contains</span></button>
+							<button id='search-pattern-ends' role='radio' aria-checked='false' aria-label='Search for words ending with x'><span aria-hidden='true'>Ends</span></button>
 						</div>
 						<div class='flex-col pos-anchor'>
 							<input id='searchbar' type='text' placeholder='Search...'>
 							<div id='searchbar-actions-left' class='flex-row-centered'>
-								<button id='search-filters' class='icon icon-svg' title='Search filters'>
-									<svg id='nav-hamburger' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' width='24' height='24' stroke-width='1.5'>
+								<button id='search-filters' class='flex-centered' title='Search filters'>
+									<svg id='nav-hamburger' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' width='24' height='24' stroke-width='1.5' aria-hidden='true'>
 										<path d='M5 8l14 0'></path>
 										<path d='M7 12l10 0'></path>
 										<path d='M9 16l6 0'></path>
@@ -710,9 +765,9 @@
 								</button>
 							</div>
 							<div id='searchbar-actions-right' class='flex-row-centered'>
-								<button id='search-lang-L1' class='search-lang active' title='Search in English'>EN</button>
-								<button id='search-lang-L2' class='search-lang' title='Search in Wikchamni'>WK</button>
-								<button id='search-clear' class='icon icon-x' title='Clear search'></button>
+								<button id='search-lang-L1' class='search-lang active' title='Search in English'><span aria-hidden='true'>EN</span></button>
+								<button id='search-lang-L2' class='search-lang' title='Search in Wikchamni'><span aria-hidden='true'>WK</span></button>
+								<button id='search-clear' class='flex-centered' title='Clear search'><div class='icon icon-x'></div></button>
 							</div>
 						</div>
 						<div id='search-copy-chars' class='flex-row flex-centered'>
@@ -726,24 +781,24 @@
 						<div class='flex-col modal hidden'>
 							<div class='flex-col modal-content' tabindex='0' role='dialog' aria-label='Search filters'>
 								<div class='flex-row-centered flex-separated-row modal-header'>
-									<h2>Filter Catgs</h2>
+									<h2>Filter Part of Speech</h2>
 									<button id='filters-close' class='icon icon-x' title='Close search filters'></button>
 								</div>
 								<div id='filters-catgs' class='flex-row'>
-									<button id='filter-catg-n' class='filter-catg-bubble'>N</button>
-									<button id='filter-catg-v' class='filter-catg-bubble'>V</button>
-									<button id='filter-catg-n-theme' class='filter-catg-bubble'>N-theme</button>
-									<button id='filter-catg-v-theme' class='filter-catg-bubble'>V-theme</button>
-									<button id='filter-catg-v-base' class='filter-catg-bubble'>V-base</button>
-									<button id='filter-catg-prn' class='filter-catg-bubble'>Prn</button>
-									<button id='filter-catg-prt' class='filter-catg-bubble'>Prt</button>
-									<button id='filter-catg-afx' class='filter-catg-bubble'>Afx</button>
-									<button id='filter-catg-misc' class='filter-catg-bubble'>MISC</button>
+									<button id='filter-catg-n' class='filter-catg-bubble' role='checkbox' aria-checked='true' title='Nouns'><span aria-hidden='true'>N</span></button>
+									<button id='filter-catg-v' class='filter-catg-bubble' role='checkbox' aria-checked='true' title='Verbs'><span aria-hidden='true'>V</span></button>
+									<button id='filter-catg-n-theme' class='filter-catg-bubble' role='checkbox' aria-checked='true' title='Noun-themes'><span aria-hidden='true'>N-theme</span></button>
+									<button id='filter-catg-v-theme' class='filter-catg-bubble' role='checkbox' aria-checked='true' title='Verb-themes'><span aria-hidden='true'>V-theme</span></button>
+									<button id='filter-catg-v-base' class='filter-catg-bubble' role='checkbox' aria-checked='true' title='Verb-bases'><span aria-hidden='true'>V-base</span></button>
+									<button id='filter-catg-prn' class='filter-catg-bubble' role='checkbox' aria-checked='true' title='Pronouns'><span aria-hidden='true'>Prn</span></button>
+									<button id='filter-catg-prt' class='filter-catg-bubble' role='checkbox' aria-checked='true' title='Particles'><span aria-hidden='true'>Prt</span></button>
+									<button id='filter-catg-afx' class='filter-catg-bubble' role='checkbox' aria-checked='true' title='Affixes'><span aria-hidden='true'>Afx</span></button>
+									<button id='filter-catg-misc' class='filter-catg-bubble' role='checkbox' aria-checked='true' title='Miscellaneous'><span aria-hidden='true'>MISC</span></button>
 								</div>
 								<div class='flex-col modal-footer'>
-									<button id='filters-catgs-all' class='filter-catg-bubble meta active'>ALL</button>
-									<p>Click or tap to select only one.</p>
-									<p>Alt+Click or longpress to toggle, for selecting multiple.</p>
+									<button id='filters-catgs-all' class='filter-catg-bubble meta active' title='Show all parts of speech'><span aria-hidden='true'>ALL</span></button>
+									<p>Left-click or tap to select only one.</p>
+									<p>Right-click or longpress to toggle, for selecting multiple.</p>
 								</div>
 							</div>
 						</div>
@@ -820,16 +875,24 @@
 						<button class='goto-button'>Back to Search</button>
 					</div>
 				</section>
-			</div>
+			</main>
 		</div>
 
 		<!-- templates -->
 		<template id='tpl-search-result'>
 			<button class='flex-row-centered search-result'>
-				<p class='search-result-catg'>catg</p>
-				<p class='search-result-word'>word</p>
-				<div class='icon'></div>
-				<div class='icon'></div>
+				<!-- if button has aria-label and all contents are aria-hidden, then label gets read twice -->
+				<!-- if text spans are visible and div/span icon is hidden, icon will still get focused by screen reader -->
+				<!-- if all button contents are visible, icons get read as "Has audio group", then get focused and read a second time -->
+				<!-- <span class='search-result-catg'>catg</span>
+				<span class='search-result-word'>word</span>
+				<span class='icon'></span>
+				<span class='icon'></span> -->
+
+				<span class='search-result-catg' aria-hidden='true'>catg</span>
+				<span class='search-result-word' aria-hidden='true'>word</span>
+				<div class='icon' aria-hidden='true'></div>
+				<div class='icon' aria-hidden='true'></div>
 			</button>
 		</template>
 		<template id='tpl-entry-L2'>
@@ -848,6 +911,9 @@
 				<p class='entry-example-L1'>[no English translation]</p>
 			</div>
 		</template>
+		<!-- <template id='tpl-audio-button'>
+			<button class='icon icon-audio' title='[Blank or missing audio file]'></button>
+		</template> -->
 
 		<!-- scripts -->
 		<script type='text/javascript'>

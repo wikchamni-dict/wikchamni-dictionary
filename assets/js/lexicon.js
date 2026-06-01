@@ -252,6 +252,8 @@ const populateIndexDOMElementsFor = (index) => {
             renderEntryFor(card);
             focusEntry();
         };
+        // manually build ARIA-accessible description, since multiple spans inside button is freaking out some screen readers
+        e.ariaLabel = `${card.catg} ${card.word} ${(card.hasImages)?'Has image':''} ${(card.hasAudio)?'Has audio':''}`;
     }
 };
 
@@ -426,8 +428,8 @@ let search = {
                 numCatgs++;
                 if (search.filters.catgs[catg].visible) numActiveCatgs++;
             }
-            // show/hide catgs
             for (let catg of CATGS) {
+                // show/hide catgs
                 if (search.filters.catgs[catg].visible) {
                     // show if active
                     search.filters.catgs[catg].domElement.classList.remove('inactive');
@@ -441,7 +443,10 @@ let search = {
                     search.filters.catgs[catg].domElement.classList.remove('active');
                     search.filters.catgs[catg].domElement.classList.add('inactive');
                 }
+                // update ARIA accessibility checkbox status
+                search.filters.catgs[catg].domElement.ariaChecked = (search.filters.catgs[catg].visible) ? 'true' : 'false';
             }
+            // same show/hide and ARIA logic for default catchall "catg"
             if (search.filters.catgsMisc.visible) {
                 // show if active
                 search.filters.catgsMisc.domElement.classList.remove('inactive');
@@ -455,6 +460,7 @@ let search = {
                 search.filters.catgsMisc.domElement.classList.remove('active');
                 search.filters.catgsMisc.domElement.classList.add('inactive');
             }
+            search.filters.catgsMisc.domElement.ariaChecked = (search.filters.catgsMisc.visible) ? 'true' : 'false';
             // "Select All" button
             if (numActiveCatgs === numCatgs) {
                 eSearchFiltersCatgsAll.classList.add('active');
@@ -487,6 +493,10 @@ const setSearchPattern = (pattern) => {
         document.querySelector('#search-pattern-contains').classList.add('active');
         document.querySelector('#search-pattern-ends').classList.remove('active');
     }
+    // update ARIA accessibility radio-button status
+    document.querySelector('#search-pattern-begins').ariaChecked = (search.pattern === SEARCH_PATTERN_BEGINS) ? 'true' : 'false';
+    document.querySelector('#search-pattern-contains').ariaChecked = (search.pattern === SEARCH_PATTERN_CONTAINS) ? 'true' : 'false';
+    document.querySelector('#search-pattern-ends').ariaChecked = (search.pattern === SEARCH_PATTERN_ENDS) ? 'true' : 'false';
     // perform search
     search.filter();
 }
@@ -675,7 +685,6 @@ const renderEntryFor = (card) => {
     // related words
     eEntryDisplay.querySelector('.entry-lexemes').textContent = '';
 
-    // TOOD: display lexeme / not lexeme indicator
     // TODO: display images
     // TODO: in lexeme entries, link non-underlying words to standard entries (else color red)
     // TODO: in standard entries, link underlying words to lexeme entries (else color red)
