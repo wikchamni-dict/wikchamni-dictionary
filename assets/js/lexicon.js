@@ -5,6 +5,8 @@ import * as parser from './parse-toolbox-output.js';
 
 //// DATA /////////////////////////////////////////////////////////////////////
 
+const IMG_404 = `assets/images/404.png`;
+
 // enum
 const CARD_TYPE_ENTRY = false;
 const CARD_TYPE_LEXEME = true;
@@ -625,9 +627,11 @@ const renderEntryFor = (card) => {
     }
     // console.log(entry);
     // header (L1, catg, headword)
-    eEntryDisplay.querySelector('.entry-L1').textContent = entry?.L1.join(SYNONYM_JOIN) || '[no English translation]';
+    const eng = entry?.L1.join(SYNONYM_JOIN);
+    const wik = entry?.L2[0]?.L2;
+    eEntryDisplay.querySelector('.entry-L1').textContent = eng || '[no English translation]';
     eEntryDisplay.querySelector('.entry-catg').textContent = entry.catg || '[no catg]';
-    eEntryDisplay.querySelector('.entry-headword').textContent = entry?.L2[0]?.L2 || '[no Wikchamni headword]';
+    eEntryDisplay.querySelector('.entry-headword').textContent = wik || '[no Wikchamni headword]';
     // L2 wordforms
     if (entry.L2.length > 0) {
         eEntryDisplay.querySelector('.entry-words').textContent = '';
@@ -657,8 +661,24 @@ const renderEntryFor = (card) => {
         eEntryDisplay.querySelector('.entry-words').textContent = '[no Wikchamni wordforms]';
     }
     // L2 examples
-    if (entry.L2.length > 0) {
+    if (entry.L2.length > 0 || card.hasImages) {
         eEntryDisplay.querySelector('.entry-examples').textContent = '';
+        // add images
+        for (let image of entry.images ?? []) {
+            console.log(`${image} -> ${image.replaceAll('\\','/')}`);
+            const e = document.getElementById('tpl-entry-image').content.firstElementChild.cloneNode(true);
+            e.querySelector('img').src = (image || IMG_404).replaceAll('\\','/');
+            e.querySelector('img').alt = `Image of ${eng || wik || 'blank entry'}`;
+            e.querySelector('img').onerror = () => {
+                if (e.querySelector('img').src == IMG_404) {
+                    console.error(`Missing image image is missing.`); // prevent inf loop
+                } else {
+                    e.querySelector('img').src = IMG_404; // check for missing images
+                }
+            }
+            eEntryDisplay.querySelector('.entry-examples').appendChild(e);
+        }
+        // add examples
         for (let example of entry.examples ?? []) {
             const e = document.getElementById('tpl-entry-example').content.firstElementChild.cloneNode(true);
             e.querySelector('.entry-example-L1').textContent = example.L1 || '[no English translation]';
