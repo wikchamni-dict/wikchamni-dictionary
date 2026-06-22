@@ -1,9 +1,12 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="en" xml:lang="en">
 	<head>
 		<title>Wikchamni Dictionary</title>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<meta name="robots" content="index, follow">
+		<meta name="description" content="The Wikchamni dictionary contains thousands of words and example sentences in the Wikchamni tribal language, many with pictures or longer traditional stories. A great resource for students, language learners, and linguistic research.">
+		<!-- <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" /> -->
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="manifest" href="assets/favicons/manifest.json"/>
 		<link rel="apple-touch-icon" href="assets/favicons/apple-touch-icon.png"/>
 		<link rel="icon" type="image/png" href="assets/favicons/android-chrome-512x512.png" sizes="512x512"/>
@@ -12,6 +15,7 @@
 		<link rel="icon" type="image/png" href="assets/favicons/favicon-16x16.png" sizes="16x16"/>
 		<link rel="icon" type="image/png" href="assets/favicons/favicon-32x32.png" sizes="32x32"/>
 		<link rel="shortcut icon" href="favicon.ico" type="image/vnd.microsoft.icon" />
+		<link rel="stylesheet" href="assets/css/common.css">
 		<!-- Google tag (gtag.js) -->
 		<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-4M1HFRESQ7"></script>
 		<script>
@@ -23,44 +27,935 @@
 			gtag('config', 'UA-5613790-32');
 		</script> -->
 		<style>
-			#main {
-				/* fill screen */
+			:root {
+				--dbg: #f0f;
+
+				--primary-faded: #666f99;
+				--highlight: #2f91ff;
+				/* --highlight: #428bca; */
+				--highlight-dark: #113366ff;
+				--bg-tint: #2f91ff22;
+
+				--dark: #181818;
+				--bg-grey: #cfd8f0;
+				--bg-grey-light: #f4f4fb;
+
+				--text-dark: #00000088;
+				--text-dark: #000000aa;
+				--text-dark-focus: #000000ee;
+				--text-light: #ffffffb3;
+				--text-light-focus: #ffffffee;
+				
+				--border-light: #00000022;
+				--border-medium: #bbd;
+
+				--image-shadow: drop-shadow(0 0 4px #0002);
+
+				--navbar-height: 2em;
+				--search-panel-width: clamp(10em, 33vw, 18em);
+
+				--panel-border: thin solid var(--border-medium);
+			}
+
+			body {
+				background-color: white;
+			}
+
+
+
+			/**** NAVBAR ****/
+
+			/* navbar assumes it's inside screen-width flex-col */
+
+			#navbar {
+				color: var(--text-light);
+				background-color: var(--dark);
+				z-index: var(--layer-nav);
+				font-size: 1em;
 				width: 100%;
 				max-width: 100vw;
-				height: 100%;
-				max-height: 100vh;
+				height: var(--navbar-height);
+				padding: 0 0.5em;
 				position: fixed;
 				top: 0;
 				left: 0;
-				inset: 0;
-				overflow: overlay;
-				/* flex-centered */
+			}
+			#navbar > h1 {
+				color: var(--text-light-focus);
+				font-size: 1.3em;
+			}
+			#navbar > button {
+				color: white;
+				width: 2.7em;
+				height: 100%;
+				/* flex-centered by default */
 				display: flex;
-				flex-direction: column !important;
 				justify-content: center;
 				align-items: center;
+			}
+			#navbar > button:hover {
+				background-color: #fff1;
+			}
+			#navbar > button > svg {
+				width: 2em;
+				height: 2em;
+			}
+			#navbar > button:focus-visible > svg {
+				outline: medium solid white;
+			}
 
-				/* styling */
-				/* gap: 3em; */
+			#nav-adaptive-wrapper {
+				background-color: #0008;
+
+				width: 100%;
+				height: calc(100vh - var(--navbar-height)); /*  fallback for legacy browsers w/o dynamic viewport units */
+				height: calc(100dvh - var(--navbar-height));
+				position: absolute;
+				top: 100%;
+				left: 0;
 			}
-			#main > h1 {
-				font-size: 3em;
+			#nav-adaptive-wrapper ul {
+				background-color: var(--dark);
+				border-top: thin solid #fff6;
+				list-style: none;
+				width: min(100%, 12em);
+				height: 100%;
+				align-self: end;
 			}
-			#main > p {
-				color: #888;
+
+			#nav-adaptive-wrapper ul > li {
+				width: 100%;
+			}
+			#nav-adaptive-wrapper ul > li:hover {
+				background-color: #fff1;
+			}
+			#nav-adaptive-wrapper ul > li:focus-visible {
+				outline: none;
+			}
+			#nav-adaptive-wrapper ul > li.active, #nav-adaptive-wrapper ul > li.active > p {
+				color: white !important;
+				background-color: #fff2 !important;
+			}
+			#nav-adaptive-wrapper ul > li > a, #nav-adaptive-wrapper ul > li > p {
+				color: var(--text-light);
+				border: medium solid transparent;
+				width: 100%;
+				height: 100%;
+				padding: 0.5em 1em;
+				text-align: center;
+				text-decoration: none;
+				
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			#nav-adaptive-wrapper ul > li > a:focus-visible {
+				border: medium solid white;
+				outline: none;
+			}
+
+			#nav-close {
+				padding-top: 2em;
+				flex-grow: 1;
+			}
+			#nav-close > button {
+				--w: 2.5em;
+				background-color: var(--bg-medium);
+				border: thin solid var(--border-grey);
+				border-radius: 100%;
+				width: var(--w);
+				height: var(--w);
+			}
+			#nav-close > button:hover {
+				background-color: var(--bg-medium-lighter);
+				border: thin solid var(--text-light);
+			}
+			#nav-close > button:focus-visible {
+				outline: medium solid var(--text-light);
+			}
+
+
+
+			/**** GENERAL CONTENT STYLING ****/
+
+			.warning {
+				/* border: thin solid red !important; */
+				color: red !important;
+			}
+			.warning * {
+				color: red !important;
+			}
+
+			#content {
+				color: var(--text-dark-focus);
+				width: 100vw; /* fallback for older browsers */
+				width: 100dvw;
+				overflow-x: hidden;
+			}
+
+
+
+			#search-goto-entry {
+				padding: 0.5em;
+				gap: 0.25em;
+			}
+			#entry-goto-search {
+				background-color: var(--bg-grey);
+				border-top: thin solid var(--border-medium);
+				padding: 0.5em;
+				position: sticky;
+				bottom: 0;
+			}
+			.goto-button {
+				color: white;
+				background-color: var(--highlight);
+				padding: 0.5em;
+				text-align: center;
+			}
+			.goto-button:focus-visible {
+				outline: medium solid black !important;
+			}
+
+			/**** SEARCH ****/
+
+			#dictionary-search {
+				/* color: var(--text-dark); */
+				background-color: var(--bg-grey);
+				border-right: var(--panel-border);
+				position: fixed;
+				top: var(--navbar-height);
+				left: 0;
+				overflow: overlay;
+
+				min-width: 10em;
+				height: calc(100vh - var(--navbar-height)); /* fallback for older browsers */
+				height: calc(100dvh - var(--navbar-height));
+
+				/* mobile mode */
+				width: 100%;
+			}
+			#dictionary-search:focus-visible {
+				box-shadow: 3px 3px var(--highlight) inset, -3px -3px var(--highlight) inset;
+			}
+
+			#search-wrapper {
+				border-bottom: var(--panel-border);
+			}
+
+			#search-patterns > button {
+				color: var(--text-dark);
+				font-size: 0.8em;
+			}
+			#search-patterns > button > span {
+				display: inline-block;
+				width: 5em;
+				padding: 0.1em;
+				margin: 0.2em;
+			}
+			#search-patterns > button:hover > span {
+				color: var(--text-dark-focus);
+				text-decoration: underline;
+			}
+			#search-patterns > button:focus-visible {
+				outline: medium solid black !important;
+			}
+			#search-patterns > button.active > span {
+				color: var(--text-dark-focus);
+				/* box-shadow: 0 3px 0 var(--highlight); */
+				border-bottom: medium solid var(--highlight);
+				text-decoration: none;
+			}
+
+			#search-wrapper > .pos-anchor {
+				margin: 0 0.3em;
+			}
+			#searchbar {
+				border: thin solid var(--border-medium);
+				border-radius: 0.25em;
+				padding: 0.15em;
+				padding-left: 1.75em;
+				padding-right: 6em;
 				font-size: 1em;
 			}
+			#searchbar:active {
+				border: thin solid var(--border-medium);
+				outline: none;
+			}
+			#searchbar:focus-visible {
+				border: thin solid var(--highlight);
+				outline: thin solid var(--highlight);
+			}
+			#searchbar-actions-left {
+				height: 100%;
+				position: absolute;
+				left: 0;
+				padding: 0 0.15em;
+			}
+			#searchbar-actions-left > button {
+				height: 100%;
+			}
+			#search-filters {
+				color: white !important;
+			}
+			#search-filters > svg {
+				background-color: var(--highlight) !important;
+				border-radius: 0.2em;
+			}
+			#search-filters:focus-visible {
+				outline: medium solid var(--dark);
+			}
+			#search-filters:hover> svg {
+				color: var(--bg-tint);
+				/* outline: thin solid var(--highlight-dark); */
+				/* background-color: var(--highlight-dark) !important; */
+			}
+			#searchbar-actions-right {
+				/* border: thin solid transparent; */
+				height: 100%;
+				position: absolute;
+				right: 0;
+				padding-right: 0.15em;
+			}
+			#searchbar-actions-right > button {
+				height: 100%;
+			}
+			.search-lang > span {
+				color: var(--highlight) !important;
+				background-color: transparent;
+				display: inline-block;
+				width: 2em;
+			}
+			.search-lang.active > span {
+				color: white !important;
+				background-color: var(--highlight) !important;
+			}
+			.search-lang:hover > span {
+				background-color: var(--bg-grey-light);
+			}
+			.search-lang:focus-visible {
+				outline: medium solid var(--dark);
+			}
+			#search-clear {
+				width: 1.5em;
+			}
+			#search-clear:hover > .icon-x {
+				background-color: var(--bg-grey-light);
+			}
+			#search-copy-chars {
+				flex-wrap: wrap;
+			}
+			#search-copy-chars > button {
+				/* Safari browser will style button as link if color is inherited; must explicitly override on element */
+				color: var(--text-dark-focus);
+				padding: 0.15em 0.5em;
+			}
+			#search-copy-chars > button:hover {
+				background-color: var(--bg-grey-light);
+			}
+			#search-copy-chars > button:focus-visible {
+				outline: medium solid black;
+				z-index: var(--layer-front);
+			}
+
+			#search-results-wrapper {
+				background-color: var(--bg-grey-light);
+				font-size: 0.9em;
+				overflow: hidden;
+				position: relative; /* anchor for modal */
+			}
+			#search-results {
+				width: 100%;
+				min-height: 100%;
+				max-height: 100%;
+
+				padding: 0.25em;
+				overflow-x: hidden;
+				overflow-y: overlay;
+			}
+			.search-result {
+				/* Safari browser will style button as link if color is inherited; must explicitly override on element */
+				color: var(--text-dark-focus);
+				padding: 0.3em;
+				padding-left: 0.25em;
+				gap: 0.2em;
+			}
+			.search-result:hover {
+				background-color: white;
+			}
+			.search-result:focus-visible {
+				outline: medium solid black;
+				/* prevent outline from being hidden beneath neighboring elems */
+				z-index: var(--layer-front);
+			}
+			.search-result + .search-result {
+				border-top: thin solid var(--border-light);
+			}
+			.search-result.active {
+				background-color: white;
+				box-shadow: inset 5px 0 0 0 var(--highlight) !important;;
+			}
+			.search-result-catg {
+				color: var(--text-dark);
+				width: 2em;
+				text-align: center;
+				font-size: 0.8em;
+			}
+			.search-result-word {
+				text-align: left;
+				flex-shrink: 1;
+				flex-grow: 1;
+			}
+			.search-results-status {
+				color: var(--text-subtitle);
+				padding: 2em 0;
+				font-size: 1.2em;
+				text-align: center;
+			}
+
+			.modal {
+				background-color: #0004;
+				width: 100%;
+				/* height: 100%; */
+				min-height: 100%;
+				max-height: 100%;
+				position: absolute;
+				top: 0;
+				left: 0;
+				padding: 2em;
+				z-index: var(--layer-front);
+				overflow: overlay;
+			}
+			.modal-content {
+				background-color: white;
+				border-radius: 0.5em;
+				filter: var(--modal-shadow);
+				width: 100%;
+				min-height: 10em;
+				padding: 1em;
+				gap: 1.5em;
+			}
+			.modal-header {
+				border-bottom: thin solid var(--text-dark);
+				padding: 0.15em;
+			}
+			.modal-header h2 {
+				font-size: 1.25em;
+			}
+			.modal-header .icon-x {
+				font-size: 1.2em;
+			}
+			.modal-header .icon-x:hover {
+				background-color: var(--bg-grey-light);
+			}
+			.modal-footer {
+				color: var(--text-dark);
+				gap: 0.5em;
+			}
+			.modal-footer > p {
+				text-align: center;
+			}
+			#filters-catgs {
+				justify-content: center;
+				flex-wrap: wrap;
+				gap: 0.5em;
+			}
+			.filter-catg-bubble {
+				color: var(--highlight);
+				background-color: var(--bg-tint);
+				border: thin solid var(--highlight);
+				border-radius: 1em;
+				padding: 0.25em 1em;
+				/* prevent safari browser from selecting text instead of clicking button */
+				user-select: none;
+				-webkit-user-select: none;
+			}
+			.filter-catg-bubble:hover {
+				filter: var(--modal-shadow);
+			}
+			.filter-catg-bubble:focus-visible {
+				outline: medium solid var(--dark);
+			}
+			.filter-catg-bubble.active {
+				color: white !important;
+				background-color: var(--highlight) !important;
+			}
+			.filter-catg-bubble.inactive {
+				color: var(--text-dark);
+				background-color: var(--bg-grey-light);
+				border: thin solid var(--text-dark);
+			}
+			.filter-catg-bubble.meta {
+				border-radius: 0.25em;
+			}
+
+			#search-footer {
+				color: var(--text-dark);
+				border-top: var(--panel-border);
+				padding: 0.25em 0.8em;
+				font-size: 0.8em;
+			}
+
+
+
+			/**** ENTRY DISPLAY ****/
+
+			#dictionary-entry {
+				background-color: white;
+				position: relative;
+				margin-top: var(--navbar-height);
+				width: 100%;
+				overflow: overlay;
+
+				left: 100%;
+				transition: left 0.25s;
+
+				height: calc(100vh - var(--navbar-height));
+				height: calc(100dvh - var(--navbar-height));
+			}
+			#dictionary-entry.focus {
+				left: 0;
+			}
+			#dictionary-entry:focus-visible {
+				box-shadow: 3px 3px var(--highlight) inset, -3px -3px var(--highlight) inset;
+			}
+
+			#entry-content {
+				padding: 1em;
+				gap: 2em;
+				flex-grow: 1;
+			}
+			.entry-header {
+				border-bottom: thin solid var(--text-dark);
+				padding: 0.5em;
+				flex-wrap: wrap;
+				/* mobile spacing */
+				gap: 0.25em;
+				align-items: start;
+			}
+			.entry-L1 {
+				font-size: 1.7em;
+				font-weight: bold;
+				flex-shrink: 1;
+			}
+			.entry-catg {
+				font-style: italic;
+			}
+			.entry-headword {
+				font-size: 1.3em;
+				flex-shrink: 1;
+			}
+			.entry-words {
+				gap: 0.8em;
+				padding: 0 1em;
+			}
+			.entry-L2 {
+				gap: 1em;
+			}
+			.entry-L2-form {
+				color: var(--primary-faded);
+				width: 8em;
+				font-size: 0.8em;
+				font-weight: bold;
+				text-align: right;
+			}
+			.entry-L2-word {
+				font-size: 1em;
+			}
+			/* .entry-L2 .icon-audio {
+				padding: 0.2em;
+			} */
+			.entry-L2 .icon-audio:hover {
+				background-color: var(--bg-grey-light);
+			}
+
+
+			.entry-examples {
+				padding: 0 1em;
+				gap: 1em;
+			}
+			.entry-example {
+				background-color: var(--bg-tint);
+				border-left: medium solid var(--highlight);
+				padding: 1em;
+				gap: 0.5em;
+			}
+			.entry-example-L1 {
+				color: var(--text-dark);
+				font-style: italic;
+			}
+			.entry-example > .flex-row-centered {
+				flex-shrink: 1;
+				gap: 0.5em;
+			}
+			.entry-example > .flex-row-centered > p {
+				/* flex-row wrapper changes flex axis */
+				flex-shrink: 1;
+			}
+			/* .entry-example .icon-audio {
+				padding: 0.2em;
+			} */
+			.entry-example .icon-audio:hover {
+				background-color: white;
+			}
+			.entry-picture > img {
+				border: thin solid var(--border-light);
+				border-radius: 0.5em;
+				filter: var(--image-shadow);
+				width: auto;
+				height: auto;
+				max-width: min(100%, 20em);
+				max-height: min(100%, 20em);
+			}
+
+			.entry-lexemes {
+				gap: 0.5em;
+			}
+			.entry-lexemes h3 {
+				font-size: 1.2em;
+			}
+			.entry-lexeme {
+				color: var(--text-dark-focus);
+				background-color: var(--bg-tint);
+
+				border: medium solid var(--highlight-dark);
+				border-radius: 0.5em;
+				padding: 0.5em;
+				
+				gap: 0.5em;
+			}
+
+
+
+			/**** ICONOGRAHPY ****/
+
+			.icon {
+				--pad: 0.1em;
+				border-radius: 0.25em;
+				width: calc(1em + 2 * var(--pad));
+				height: calc(1em + 2 * var(--pad));
+				position: relative;
+			}
+			.icon:focus-visible {
+				outline: medium solid var(--dark);
+			}
+
+			.icon-dbg {
+				background-color: #557;
+				background-color: var(--primary-faded);
+			}
+
+			.icon-svg {
+				/* icon will contain <svg>, so act as flexbox to center it */
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+
+			.icon-audio {
+				background: url('./assets/images/audio.png') var(--thumbnail-position);
+			}
+			.icon-image {
+				background: url('./assets/images/image.png') var(--thumbnail-position);
+			}
+
+			.icon-x::before, .icon-x::after {
+				content: '';
+				background-color: #557;
+				background-color: var(--primary-faded);
+				border-radius: 1em;
+				display: inline-block;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				width: 0.1em;
+				height: 1em;
+			}
+			.icon-x::before {
+				transform: translate(-50%,-50%) rotate(45deg);
+			}
+			.icon-x::after {
+				transform: translate(-50%,-50%) rotate(-45deg);
+			}
+			.icon-x:hover::before, .icon-x:hover::after {
+				background-color: red;
+			}
+
+
+
+			/**** DESKTOP MODE OVERRIDES ****/
+
+			@media (min-aspect-ratio: 5/4) { /* desktop mode */
+				#nav-adaptive-wrapper {
+					background-color: transparent;
+
+					width: fit-content;
+					height: 100%;
+					position: static;
+					top: 100%;
+					left: 0;
+				}
+				#nav-adaptive-wrapper ul {
+					border: none;
+					padding: 0;
+				}
+				#nav-adaptive-wrapper ul > li {
+					width: fit-content;
+				}
+
+				#search-goto-entry, #entry-goto-search {
+					display: none;
+				}
+				#dictionary-search {
+					width: var(--search-panel-width);
+				}
+				#search-results-wrapper {
+					font-size: 0.8em;
+				}
+
+				#dictionary-entry {
+					margin-left: var(--search-panel-width);
+					left: 0;
+					height: auto;
+				}
+				.entry-header {
+					gap: 1em;
+					align-items: baseline;
+					justify-content: start;
+				}
+				.entry-words {
+					padding: 0 2em;
+				}
+				.entry-examples {
+					padding: 0 2em;
+				}
+			}
+
 		</style>
 	</head>
 	<body>
 
-		<!-- Wrapper -->
-		<div id='main'>
-			<h1>Wikchamni Dictionary</h1>
-			<p>Under construction...</p>
+		<!-- static content -->
+		<div id='main' class='flex-col'>
+			<nav id='navbar' class='flex-row-centered' role='navigation' aria-label='Top Level'>
+				<h1>Wikchamni Dictionary</h1>
+				<div class='flex-sep'></div>
+				<button id='nav-menu-target' class='mobile-only' title='Expand and collapse menu' aria-expanded='false'>
+					<svg id='nav-hamburger' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' width='24' height='24' stroke-width='1.5' aria-hidden='true'>
+						<path d='M5 8l14 0'></path>
+						<path d='M5 12l14 0'></path>
+						<path d='M5 16l14 0'></path>
+					</svg>
+				</button>
+				<div id='nav-adaptive-wrapper' class='flex-adapt'>
+					<ul class='flex-adapt'>
+						<li><a href='./'>Home</a></li>
+						<li><a href='./about'>About</a></li>
+						<li><a href='./language'>Language</a></li>
+						<li class='active' aria-label='Current page is'><p>Lexicon</p></li>
+					</ul>
+				</div>
+			</nav>
+
+			<main id='content' class='flex-row flex-grow'>
+				<section id='dictionary-search' class='flex-col' tabindex='0' aria-label='Dictionary search'>
+					<div id='search-wrapper' class='flex-col'>
+						<div id='search-patterns' class='flex-row flex-centered' role='radiogroup' aria-label='Search type'>
+							<button id='search-pattern-begins' class='active' role='radio' aria-checked='true' aria-label='Search for words beginning with x'><span aria-hidden='true'>Begins</span></button>
+							<button id='search-pattern-contains' role='radio' aria-checked='false' aria-label='Search for words containing x'><span aria-hidden='true'>Contains</span></button>
+							<button id='search-pattern-ends' role='radio' aria-checked='false' aria-label='Search for words ending with x'><span aria-hidden='true'>Ends</span></button>
+						</div>
+						<div class='flex-col pos-anchor'>
+							<input id='searchbar' type='text' placeholder='Search...'>
+							<div id='searchbar-actions-left' class='flex-row-centered'>
+								<button id='search-filters' class='flex-centered' title='Search filters'>
+									<svg id='nav-hamburger' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' width='24' height='24' stroke-width='1.5' aria-hidden='true'>
+										<path d='M5 8l14 0'></path>
+										<path d='M7 12l10 0'></path>
+										<path d='M9 16l6 0'></path>
+									</svg>
+								</button>
+							</div>
+							<div id='searchbar-actions-right' class='flex-row-centered'>
+								<button id='search-lang-L1' class='search-lang active' title='Search in English'><span aria-hidden='true'>EN</span></button>
+								<button id='search-lang-L2' class='search-lang' title='Search in Wikchamni'><span aria-hidden='true'>WK</span></button>
+								<button id='search-clear' class='flex-centered' title='Clear search'><div class='icon icon-x'></div></button>
+							</div>
+						</div>
+						<div id='search-copy-chars' class='flex-row flex-centered'>
+							<!-- <button>a</button>
+							<button>b</button>
+							<button>c</button>
+							<button>d</button> -->
+						</div>
+					</div>
+					<div id='search-results-wrapper' class='flex-col flex-shrink flex-grow'>
+						<div class='flex-col modal hidden'>
+							<div class='flex-col modal-content' tabindex='0' role='dialog' aria-label='Search filters'>
+								<div class='flex-row-centered flex-separated-row modal-header'>
+									<h2>Filter Part of Speech</h2>
+									<button id='filters-close' class='icon icon-x' title='Close search filters'></button>
+								</div>
+								<div id='filters-catgs' class='flex-row'>
+									<button id='filter-catg-n' class='filter-catg-bubble' role='checkbox' aria-checked='true' title='Nouns'><span aria-hidden='true'>N</span></button>
+									<button id='filter-catg-v' class='filter-catg-bubble' role='checkbox' aria-checked='true' title='Verbs'><span aria-hidden='true'>V</span></button>
+									<button id='filter-catg-n-theme' class='filter-catg-bubble' role='checkbox' aria-checked='true' title='Noun-themes'><span aria-hidden='true'>N-theme</span></button>
+									<button id='filter-catg-v-theme' class='filter-catg-bubble' role='checkbox' aria-checked='true' title='Verb-themes'><span aria-hidden='true'>V-theme</span></button>
+									<button id='filter-catg-v-base' class='filter-catg-bubble' role='checkbox' aria-checked='true' title='Verb-bases'><span aria-hidden='true'>V-base</span></button>
+									<button id='filter-catg-prn' class='filter-catg-bubble' role='checkbox' aria-checked='true' title='Pronouns'><span aria-hidden='true'>Prn</span></button>
+									<button id='filter-catg-prt' class='filter-catg-bubble' role='checkbox' aria-checked='true' title='Particles'><span aria-hidden='true'>Prt</span></button>
+									<button id='filter-catg-afx' class='filter-catg-bubble' role='checkbox' aria-checked='true' title='Affixes'><span aria-hidden='true'>Afx</span></button>
+									<button id='filter-catg-misc' class='filter-catg-bubble' role='checkbox' aria-checked='true' title='Miscellaneous'><span aria-hidden='true'>MISC</span></button>
+								</div>
+								<div class='flex-col modal-footer'>
+									<button id='filters-catgs-all' class='filter-catg-bubble meta active' title='Show all parts of speech'><span aria-hidden='true'>ALL</span></button>
+									<p>Left-click or tap to select only one.</p>
+									<p>Right-click or longpress to toggle, for selecting multiple.</p>
+								</div>
+							</div>
+						</div>
+						<div id='search-results' class='flex-col'>
+							<p class='search-results-status'>Loading...</p>
+						</div>
+					</div>
+					<div id='search-footer' class='flex-separated-row'>
+						<p id='search-stat-num-results' aria-live='polite'>0/0 entries</p>
+						<p id='search-stat-time'>0.000 sec</p>
+					</div>
+					<div id='search-goto-entry' class='flex-col'>
+						<p>Go to entry:</p>
+						<button class='goto-button'>Loading...</button>
+					</div>
+				</section>
+
+				<section id='dictionary-entry' class='flex-col flex-grow flex-shrink' tabindex='0' aria-label='Dictionary entry'>
+					<!-- <div id='entry-content' class='flex-col'>
+						<div class='flex-adapt entry-header'>
+							<h2 class='entry-L1'>English Word</h2>
+							<p class='entry-catg'>catg</p>
+							<p class='entry-headword'>Headword</p>
+						</div>
+						<div class='flex-col entry-words'>
+							<div class='flex-row-centered entry-L2'>
+								<p class='entry-L2-form'>UNDERLYING</p>
+								<p class='entry-L2-word flex-shrink'>Wikchamni Word</p>
+								<button class='icon icon-audio'></button>
+							</div>
+							<div class='flex-row-centered entry-L2'>
+								<p class='entry-L2-form'>Casename</p>
+								<p class='entry-L2-word flex-shrink'>Wikchamni Word longusthemost which wraps the screen a bunch 'n stuff</p>
+								<button class='icon icon-audio'></button>
+							</div>
+						</div>
+						<div class='flex-col entry-examples'>
+							<div class='flex-centered entry-picture'>
+								<img src='./media/barn owl.jpg'>
+							</div>
+							<div class='flex-col entry-example'>
+								<div class='flex-row-centered'>
+									<p class='entry-example-L2'>Wikchamni sentence translation.</p>
+									<button class='icon icon-audio'></button>
+								</div>
+								<p class='entry-example-L1'>English example sentence.</p>
+							</div>
+							<div class='flex-col entry-example'>
+								<div class='flex-row-centered'>
+									<p class='entry-example-L2'>Wikchamni translation of sentence that is really long and might wrap the screen on smaller devices.</p>
+									<button class='icon icon-audio'></button>
+								</div>
+								<p class='entry-example-L1'>English example sentence that is really long and might wrap the screen on smaller devices.</p>
+							</div>
+						</div>
+						<div class='flex-col entry-lexemes'>
+							<h3>Related words:</h3>
+							<div class='flex-row entry-lexeme'>
+								<span class='no-wrap'>Synonym 1</span>, <span class='no-wrap'>Synonym 2</span>, <span class='no-wrap'>Synonym 3</span>
+							</div>
+							<div class='flex-row entry-lexeme'>
+								<span class='no-wrap'>Synonym 1</span>, <span class='no-wrap'>Synonym 2</span>, <span class='no-wrap'>Synonym 3</span>
+							</div>
+						</div>
+					</div> -->
+					<div id='entry-content' class='flex-col'>
+						<div class='flex-adapt entry-header'>
+							<h2 class='entry-L1'>Loading...</h2>
+							<p class='entry-catg'></p>
+							<p class='entry-headword'></p>
+						</div>
+						<div class='flex-col entry-words'></div>
+						<div class='flex-col entry-examples'></div>
+						<div class='flex-col entry-lexemes'></div>
+					</div>
+					<div id='entry-goto-search' class='flex-col'>
+						<button class='goto-button'>Back to Search</button>
+					</div>
+				</section>
+			</main>
 		</div>
 
-		<!-- Scripts -->
+		<!-- templates -->
+		<template id='tpl-search-result'>
+			<button class='flex-row-centered search-result'>
+				<!-- if button has aria-label and all contents are aria-hidden, then label gets read twice -->
+				<!-- if text spans are visible and div/span icon is hidden, icon will still get focused by screen reader -->
+				<!-- if all button contents are visible, icons get read as "Has audio group", then get focused and read a second time -->
+				<!-- <span class='search-result-catg'>catg</span>
+				<span class='search-result-word'>word</span>
+				<span class='icon'></span>
+				<span class='icon'></span> -->
+
+				<span class='search-result-catg' aria-hidden='true'>catg</span>
+				<span class='search-result-word' aria-hidden='true'>word</span>
+				<div class='icon' aria-hidden='true'></div>
+				<div class='icon' aria-hidden='true'></div>
+			</button>
+		</template>
+		<template id='tpl-entry-L2'>
+			<div class='flex-row-centered entry-L2'>
+				<p class='entry-L2-form'>form</p>
+				<p class='entry-L2-word flex-shrink'>[no Wikchamni translation]</p>
+				<!-- <button class='icon icon-dbg'></button> -->
+			</div>
+		</template>
+		<template id='tpl-entry-example'>
+			<div class='flex-col entry-example'>
+				<div class='flex-row-centered'>
+					<p class='entry-example-L2'>[no Wikchamni translation]</p>
+					<!-- <button class='icon icon-dbg'></button> -->
+				</div>
+				<p class='entry-example-L1'>[no English translation]</p>
+			</div>
+		</template>
+		<!-- <template id='tpl-audio-button'>
+			<button class='icon icon-audio' title='[Blank or missing audio file]'></button>
+		</template> -->
+		<template id='tpl-entry-image'>
+			<div class='flex-centered entry-picture'>
+				<img src=''>
+			</div>
+		</template>
+
+		<!-- scripts -->
+		<script type='text/javascript'>
+			//// NAV MENU ////
+			const eNavMenu = document.querySelector('#nav-adaptive-wrapper');
+			const eNavTarget = document.querySelector('#nav-menu-target');
+			eNavMenu.onclick = (evt) => {
+				if (!document.querySelector('#nav-adaptive-wrapper > ul').contains(evt.target)) {
+					eNavMenu.style.display = 'none';
+				}
+			};
+			eNavTarget.onclick = (evt) => {
+				eNavMenu.style.display = (eNavMenu.style.display === 'none') ? '' : 'none';
+			};
+			// force hidden in mobile mode, force visible in desktop mode
+			window.addEventListener('resize', evt => {
+				eNavMenu.style.display = (window.innerWidth/window.innerHeight > 5/4) ? '' : 'none';
+			});
+			// on mobile, nav shouldn't be open on page load
+			if (window.innerWidth/window.innerHeight < 5/4) eNavMenu.style.display= 'none';
+		</script>
+		<script type='module' src='assets/js/parse-toolbox-output.js'></script>
+		<script type='module' src='assets/js/lexicon.js'></script>
 
 	</body>
 </html>

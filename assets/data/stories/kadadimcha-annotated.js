@@ -1,0 +1,73 @@
+
+let story_kadadimcha = {
+	audio : ``,
+	titleL1 : `Kadadimcha and Her Pregnant Daughter`,
+	titleL2 : `Kʰatatimčʰa yow Tokʼoʔwonʼo  ʔa·xit`,
+	titleShortL1 : `Kadadimcha`,
+	titleShortL2 : `Kʰatatimčʰa`,
+	timestampsBySentence : [
+		0.0,
+		`Hiya·mʼu wɨxnat ʔo·ma pʼaʔanʼin tɨʔɨsnaw, Kʰatatimčʰa xo·ʔoxʔoš ʔan tokʼoʔwonʼo ʔa·xit.`,
+		`Very long ago when the world was made, lived Kadadimcha and her pregnant daughter.`,
+		0.0,
+		`Hute·ʔčʼa ʔan xotom maxa ʔamaʔ tʰaŋ wittʰa Kʰatatimčʰa našuš ʔan:`,
+		`She liked to get sweet clover and Kadadimcha, her mother, told her:`,
+		0.0,
+		`Xo·ʔoxi xew tuxun tʰaxnat tʰaw tuyo·ʔučʼʔamaʔ to·yatiy tukʼewnačʼhi mukešhi.`,
+		`There is a bear that comes there who is an eater and eats pregnant women.`,
+		0.0,
+		`Tʰa·ŋi tošši ʔan ʔaxta.`,
+		`That is what she told her daughter.`,
+		0.0,
+		`Tʰaw mihiʔ ma·xin xotom,`,
+		`If you go there to get clover,`,
+		0.0,
+		`ʔamaʔ mihiʔ ʔam ho·put hotʰmʼun meʔči mamhiʔ tuxun huto·na ʔamaʔ mam hiʔ tʰaxinʔin tuyo·na.`,
+		`then do not pull the roots because the bear will hear you and will come and eat you.`,
+		0.0,
+		`Am ʔan našo·šu čʰo·pʰunšu ʔamaʔ tʰanši maxa·ʔačʼ yow xotom.`,
+		`She didn’t believe her mother and went gathering sweet clover again.`,
+		0.0,
+		`ʔamaʔ tʰanši ʔamaʔ wa·ʔaʔ xo·ʔoši.`,
+		`She went and was gone a long time.`,
+		0.0,
+		`ʔamaʔ ʔan našuš hawitši ʔakʰam tʰaw.`,
+		`And her mother didn’t know what had happened there.`,
+		0.0,
+		`ʔamaʔ tʰaw tʰanši ʔoho·ʔočʼ Kʰatatimčʰa.`,
+		`So Kadadimcha went looking for her.`,
+		0.0,
+		`Tʰaxinši tʰaw ʔamaʔ ʔə·kʰaš hiyam tʰaŋ tuyšu tuxun.`,
+		`She came there and saw that the bear had already eaten her.`,
+		0.0,
+		`Tuxun ʔam tʰaŋ ʔə·kʰaš yow tuxun tʰa hetʰtʰa ʔoho·ʔot hɨŋa·ʔat hintʰaw hetʰtʰa pukʼe·na ʔan hə·pa.`,
+		`The bear didn’t see her and the bear was sniffing around wanting to find any of the daughter’s blood.`,
+		0.0,
+		`ʔamaʔ hiyam ʔakʼam naʔ piyši ʔamaʔ tʰa·nitʰ tʰanši.`,
+		`Then the bear thought to himself, “I guess I’m finished”. And went away from there.`,
+		0.0,
+		`Kʰatatimčʰa taŋsi ʔan tʰaŋiṭʰ taŋši han tʰaxnat xe·nitʰ xotomnitʰ ʔamaʔ tʰaw ʔo·hoš ʔo·hoš.`,
+		`Kadadimcha heard him leaving, heard something coming from the clover and she looked and looked.`,
+		0.0,
+		`ʔamaʔ haweʔčey pukʼši yetʼ tʼapʼtʼapʼiw ʔan hə·pa xo·ʔoš ʔaxtin.`,
+		`And finally found on one leaf a drop of her daugther’s blood.`,
+	],
+	timestampsByClause : [
+		[
+			0.0,
+			`WIK`,
+			`ENG`
+		],[
+			0.0,
+			`WIK`,
+			`ENG`,
+			0.0,
+			`WIK`,
+			`ENG`
+		],
+	],
+	timestampsByWord : [
+		//
+	]
+};
+	
