@@ -1,0 +1,300 @@
+////////
+//// WIKCHAMNI AUTO-UPDATE SCRIPT
+//// Last run Jul 07 2026 13:33
+//// For web domain https://ssirrikh.github.io/wikchamni
+////////
+
+Checking for "toolbox-output" (no file extension)...
+Found "toolbox-output" (no file extension)!
+
+=== Scrubbing Toolbox data... ===
+
+Scrubbing CRLF...
+Normalizing characters and whitespace...
+Rejoining multiline datafields...
+Scrubbing PID from filepaths...
+
+DONE in 139.2 ms
+
+82 unique field markers encountered across 44489 tokens.
+0 tokens were ill-formed, and 6 tokens were blank.
+Rejoined 836 multiline tokens.
+Scrubbed 5507 absolute filepaths of potential PID.
+
+=== Tokenizing data... ===
+
+DONE in 61.0 ms.
+
+0 tokens were ill-formed, and 6 tokens were blank.
+81 unique field markers encountered across all 44483 tokens in tokenstream.
+
+=== Parsing tokenstream... ===
+
+Breaking tokenstream into runs...
+Parsing runs into entries...
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN Lexeme form label "\nom" appeared in standard entry "what" of catg "n"
+    WARN Lexeme form label "\abs" appeared in standard entry "what" of catg "n"
+    WARN Lexeme form label "\acc" appeared in standard entry "what" of catg "n"
+    WARN Lexeme form label "\gen" appeared in standard entry "what" of catg "n"
+    WARN Lexeme form label "\dat" appeared in standard entry "what" of catg "n"
+    WARN Lexeme form label "\abl" appeared in standard entry "what" of catg "n"
+    WARN Lexeme form label "\loc" appeared in standard entry "what" of catg "n"
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN Lexeme form label "\nom" appeared in standard entry "enemy; opponent; one who does face washing" of catg "n"
+    WARN Lexeme form label "\acc" appeared in standard entry "enemy; opponent; one who does face washing" of catg "n"
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN Lexeme form label "\nom" appeared in standard entry "dress" of catg "n"
+    WARN Lexeme form label "\acc" appeared in standard entry "dress" of catg "n"
+    WARN Lexeme form label "\pl" appeared in standard entry "dress" of catg "n"
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN Lexeme form label "\a" appeared in standard entry "dual" of catg "afx"
+    WARN Lexeme form label "\a" appeared in standard entry "dual" of catg "afx"
+    WARN Lexeme form label "\nom" appeared in standard entry "baskets" of catg "n"
+    WARN Lexeme form label "\acc" appeared in standard entry "baskets" of catg "n"
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN Lexeme form label "\nom" appeared in standard entry "smelly, stinky" of catg "n"
+    WARN Lexeme form label "\gen" appeared in standard entry "smelly, stinky" of catg "n"
+    WARN Lexeme form label "\imp" appeared in standard entry "hug" of catg "v"
+    WARN Lexeme form label "\aor" appeared in standard entry "hug" of catg "v"
+    WARN Lexeme form label "\fut" appeared in standard entry "hug" of catg "v"
+    WARN Lexeme form label "\acc" appeared in standard entry "soaprock; soaprock used as heating stones for cooking" of catg "n"
+    WARN Lexeme form label "\nom" appeared in standard entry "moneys" of catg "n"
+    WARN Lexeme form label "\acc" appeared in standard entry "moneys" of catg "n"
+    WARN Lexeme form label "\a" appeared in standard entry "oblique" of catg "afx"
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN Lexeme form label "\nom" appeared in standard entry "another; different" of catg "n-theme "
+    WARN Lexeme form label "\acc" appeared in standard entry "another; different" of catg "n-theme "
+    WARN Lexeme form label "\r-r" appeared in standard entry "another; different" of catg "n-theme "
+    WARN Lexeme form label "\r-r" appeared in standard entry "another; different" of catg "n-theme "
+    WARN Lexeme form label "\gen" appeared in standard entry "friend" of catg "n"
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN Lexeme form label "\nom" appeared in standard entry "excrement" of catg "n"
+    WARN Lexeme form label "\inc" appeared in standard entry "excrement" of catg "n"
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN Lexeme form label "\nom" appeared in standard entry "finder" of catg "n"
+    WARN Lexeme form label "\acc" appeared in standard entry "finder" of catg "n"
+    WARN Lexeme form label "\gen" appeared in standard entry "finder" of catg "n"
+    WARN Lexeme form label "\dat" appeared in standard entry "finder" of catg "n"
+    WARN Lexeme form label "\abl" appeared in standard entry "finder" of catg "n"
+    WARN Lexeme form label "\loc" appeared in standard entry "finder" of catg "n"
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN Lexeme form label "\imp" appeared in standard entry "catch repeatedly" of catg "v-theme "
+    WARN Lexeme form label "\aor" appeared in standard entry "catch repeatedly" of catg "v-theme "
+    WARN Lexeme form label "\fut" appeared in standard entry "catch repeatedly" of catg "v-theme "
+    WARN Lexeme form label "\nom" appeared in standard entry "catching" of catg "n"
+    WARN Lexeme form label "\acc" appeared in standard entry "catching" of catg "n"
+    WARN Lexeme form label "\dat" appeared in standard entry "catching" of catg "n"
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN Lexeme form label "\nom" appeared in standard entry "world; earth; country; land" of catg "n"
+    WARN Lexeme form label "\acc" appeared in standard entry "world; earth; country; land" of catg "n"
+    WARN Lexeme form label "\abl" appeared in standard entry "world; earth; country; land" of catg "n"
+    WARN Lexeme form label "\loc" appeared in standard entry "world; earth; country; land" of catg "n"
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN Lexeme form label "\aor" appeared in standard entry "take along" of catg "v-base "
+    WARN Lexeme form label "\fut" appeared in standard entry "take along" of catg "v-base "
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN Lexeme form label "\nom" appeared in standard entry "flower" of catg "n"
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN Lexeme form label "\r-r" appeared in standard entry "jealous" of catg "n"
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN \mr morphology note pruned. Some notes contain unmarked sensative info, so none can be used.
+    WARN Headless \xe " 20/Feb/2019" has no \xv to attach to in entry "English" of catg "Part of Speech"
+    Attach point was: {'L2': 'Contact:Geoff Gamble -- ggamble@mail.fresnostate.edu', 'form': None}
+
+DONE in 74.7 ms.
+
+Detected 4607 standard entries and 712 lexeme entries.
+Detected 9 non-run-starting tokens:
+    "ps" : 5319 occurences
+    "ge" : 5653 occurences
+    "sf" : 3347 occurences
+    "xe" : 2266 occurences
+    "sfx" : 2122 occurences
+    "de" : 48 occurences
+    "sn" : 11 occurences
+    "pd" : 5 occurences
+    "pdv" : 89 occurences
+14 token types were completely unhandled:
+    "dt" : 5282 occurences
+    "nt" : 719 occurences (PRUNED NOTE)
+    "sc" : 35 occurences (PRUNED NOTE)
+    "nd" : 1 occurences (PRUNED NOTE)
+    "np" : 26 occurences (PRUNED NOTE)
+    "lt" : 20 occurences (PRUNED NOTE)
+    "cf" : 148 occurences
+    "ee" : 15 occurences (PRUNED NOTE)
+    "na" : 5 occurences (PRUNED NOTE)
+    "sn" : 11 occurences
+    "bw" : 69 occurences (PRUNED NOTE)
+    "pd" : 5 occurences
+    "mn" : 2 occurences
+    "ng" : 2 occurences (PRUNED NOTE)
+
+=== Indexing entry data... ===
+
+Indexing standard entries...
+Indexing lexeme entries...
+Sorting entries...
+
+DONE in 92.5 ms.
+
+Sorted 5708 L1 words and 13051 L2 words.
+
+=== Generating output files... ===
+
+Writing sterilized data back to Toolbox SF...
+DONE in 18.1 ms
+Baking database into web-compatible JSON...
+DONE in 15.5 ms
+Building sitemap for 14 static pages, 5708 English entries, and 13051 Wikchamni entries...
+    Builing sitemap.txt...
+    Builing sitemap.xml...
+DONE in 15.6 ms
+
+All tasks DONE in 448.9 ms
