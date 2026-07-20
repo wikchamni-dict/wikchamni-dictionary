@@ -3,6 +3,7 @@ from functools import cmp_to_key
 import json
 import os
 import re
+import subprocess
 import time
 
 """
@@ -57,7 +58,7 @@ URL_BASE = 'https://ssirrikh.github.io/wikchamni'
 
 
 
-# consts
+# enum
 CARD_TYPE_ENTRY = False
 CARD_TYPE_LEXEME = True
 
@@ -93,11 +94,11 @@ STATIC_PAGES = [
 # ]
 
 # file management
-DIR_ROOT = '..\\'
-DIR_DATA = '..\\assets\\data'
-DIR_MEDIA = '..\\media'
+DIR_DATA = 'assets/data'
+DIR_MEDIA = 'media'
+DIR_UPDATE = 'update'
 FILE_DATABASE_OUTPUT = 'toolbox-output-clean' # no file ext; both "output" (extensionless) and "output.json" will be generated
-FILE_LOG = 'log.txt'
+FILE_LOG = 'log' # no file ext; "log.txt" will be generated
 FILE_SITEMAP = 'sitemap-wikchamni' # no file ext; both "sitemap.txt" and "sitemap.xml" will be generated
 # flags
 FLAG_VERBOSE = False
@@ -111,7 +112,7 @@ RE_SYNONYM_SPLITTER = re.compile(r';\s*')
 SYNONYM_JOIN = '; '
 
 # helpers
-logfile = open(FILE_LOG, 'w', encoding='utf-8')
+logfile = open(f'{FILE_LOG}.txt', 'w', encoding='utf-8')
 def log(text='', quiet=False):
     if not quiet: print(text)
     logfile.write(f'{text}\n')
@@ -521,7 +522,9 @@ def tokenize(lines): # list of tokenstrings -> ...
 
 
 
+################
 #### PARSER ####
+################
 
 def BlankEntry():
 	return {
@@ -734,7 +737,10 @@ def parse(tokenstream):
     return entries,lexemes, recorded_runs,non_run_starters,unparsed_tokens,mr_forms
 
 
+
+####################
 #### INDEX/SORT ####
+####################
 
 def IndexCard(type,id,word='',catg='',hasAudio=False,hasImages=False):
     return {
@@ -841,6 +847,274 @@ def index(entries,lexemes):
 
 ###############################################################################
 
+########################
+#### GIT AUTOMATION ####
+########################
+
+RE_GIT_STATUS = re.compile(r'(.)(.) (.+)') # match git status --porcelain "XY folder/file.txt"
+
+# manifest of generated files to be added/commited/pushed
+GIT_MANIFEST_CONTENT = [
+    # clean toolbox output
+    f'{DIR_DATA}/{FILE_DATABASE_OUTPUT}', # no ext
+    f'{DIR_DATA}/{FILE_DATABASE_OUTPUT}.json',
+    # sitemaps
+    f'{FILE_SITEMAP}.txt',
+    f'{FILE_SITEMAP}.xml',
+]
+# manifest of log/status files that are modified during content commit
+# (must be added in silent followup commit)
+GIT_MANIFEST_LOGS = [
+    f'{DIR_UPDATE}/{FILE_LOG}.txt',
+]
+
+# Automated Git Workflow:
+    # git --version -> check if git installed
+    # sync external changes
+        # (optionally ensure we're on main branch)
+        # git fetch
+        # git reset --hard origin/main
+            # fixes accidental modifications/deletions of local files
+            # leaves untracked local files untouched (update/toolbox-output.txt should always remain untracked)
+    # [execute script and generate files]
+    # sync newly generated files
+        # for file in content_manifest:
+            # git add file
+        # git status -> check what files have changed
+        # git commit -m "automated update content"
+        # git push
+        # git status -> confirm push succeeded
+    # add log/status files in un-logged followup commit
+        # for file in logs_manifest:
+            # git add file
+        # git commit -m "automated update logs"
+        # git push
+    
+    # TODO: check if log.txt gets overwritten by `git reset` mid-generation
+        # if so, need to write log to untracked buffer file
+        # then copy buffer into log.txt before followup commit
+
+# check that git is installed
+def git_version():
+    log(f'>> git --version\n')
+    with subprocess.Popen(['git', '--version'], cwd='..', stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
+        stdout_raw, stderr_raw = process.communicate()
+        stdout, stderr = stdout_raw.decode(), stderr_raw.decode()
+        if process.returncode == 0:
+            log(stdout)
+            if 'git version' not in stdout:
+                log(f'Unable to detect git version. Aborting...')
+                return { 'success': False, 'error': 'Unable to detect git version.' }
+            else:
+                return { 'success': True }
+        else:
+            log(f'ERROR\n{stderr}')
+            return { 'success': False, 'error': stderr }
+# check remote for new commits
+def git_fetch():
+    log(f'STUB >> git fetch')
+    log(f'STUB >> git reset --hard origin/main\n')
+    return { 'success': True }
+
+    # automated updates to data should generally be performed from main branch
+    # however, the check enforcing this as a hard requirement has been disabled for flexibility
+    # this check was not tested in development; do so before re-enabling it in the future
+
+    # # make sure we're on the correct branch (main)
+    # need_checkout_main_branch = False
+    # log(f'>> git branch --show-current\n')
+    # with subprocess.Popen(['git', 'branch', '--show-current'], cwd='..', stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
+    #     stdout_raw, stderr_raw = process.communicate()
+    #     stdout, stderr = stdout_raw.decode(), stderr_raw.decode()
+    #     if process.returncode == 0:
+    #         log(stdout)
+    #         log(f'Current branch is "{stdout}"')
+    #         if stdout != 'main': need_checkout_main_branch = True
+    #     else:
+    #         log(f'ERROR\n{stderr}')
+    #         return { 'success': False, 'error': stderr }
+    # if need_checkout_main_branch:
+    #     # switch branches if needed
+    #     log(f'>> git checkout main\n')
+    #     with subprocess.Popen(['git', 'checkout', 'main'], cwd='..', stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
+    #         stdout_raw, stderr_raw = process.communicate()
+    #         stdout, stderr = stdout_raw.decode(), stderr_raw.decode()
+    #         if process.returncode == 0:
+    #             if stdout == '':
+    #                 log(f'DONE')
+    #             else:
+    #                 log(stdout)
+    #         else:
+    #             log(f'ERROR\n{stderr}')
+    #             return { 'success': False, 'error': stderr }
+    #     # make sure switch succeeded
+    #     log(f'>> git branch --show-current\n')
+    #     with subprocess.Popen(['git', 'branch', '--show-current'], cwd='..', stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
+    #         stdout_raw, stderr_raw = process.communicate()
+    #         stdout, stderr = stdout_raw.decode(), stderr_raw.decode()
+    #         if process.returncode == 0:
+    #             log(stdout)
+    #             log(f'Current branch is "{stdout}"')
+    #             if stdout != 'main':
+    #                 log(f'Failed to switch to main branch. Aborting...')
+    #                 return { 'success': False, 'error': 'Failed to switch to main branch.' }
+    #         else:
+    #             log(f'ERROR\n{stderr}')
+    #             return { 'success': False, 'error': stderr }
+
+    # grab updates from remote
+    log(f'>> git fetch\n')
+    with subprocess.Popen(['git', 'fetch'], cwd='..', stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
+        stdout_raw, stderr_raw = process.communicate()
+        stdout, stderr = stdout_raw.decode(), stderr_raw.decode()
+        if process.returncode == 0:
+            if stdout == '':
+                log(f'DONE')
+            else:
+                log(stdout)
+        else:
+            log(f'ERROR\n{stderr}')
+            return { 'success': False, 'error': stderr }
+    # reset any local modifications/deletions of tracked files to ensure clean working tree
+    # (untracked local files will be left untouched)
+    log(f'>> git reset --hard origin/main\n')
+    with subprocess.Popen(['git', 'reset', '--hard', 'origin/main'], cwd='..', stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
+        stdout_raw, stderr_raw = process.communicate()
+        stdout, stderr = stdout_raw.decode(), stderr_raw.decode()
+        if process.returncode == 0:
+            if stdout == '':
+                log(f'DONE')
+            else:
+                log(stdout)
+        else:
+            log(f'ERROR\n{stderr}')
+            return { 'success': False, 'error': stderr }
+# add all files in manifest
+def git_add_all(files=[]):
+    log(f'Adding {len(files)} files from manifest...')
+    for file in files:
+        log(f'>> git add {file}')
+        with subprocess.Popen(['git', 'add', file], cwd='..', stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
+            stdout_raw, stderr_raw = process.communicate()
+            stdout, stderr = stdout_raw.decode(), stderr_raw.decode()
+            if process.returncode == 0:
+                if stdout != '': log(stdout)
+            else:
+                log(f'ERROR\n{stderr}')
+                return { 'success': False, 'error': stderr }
+    log(f'All files added.')
+    return { 'success': True }
+# check whether there are changes to commit
+def git_status():
+    log(f'>> git status --porcelain=v1 -b\n')
+    with subprocess.Popen(['git', 'status', '--porcelain=v1', '-b'], cwd='..', stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
+        stdout_raw, stderr_raw = process.communicate()
+        stdout, stderr = stdout_raw.decode(), stderr_raw.decode()
+        if process.returncode == 0:
+            log(stdout)
+            num_files_updated = 0
+            lines = re.split('\n', stdout)
+            for line in lines:
+                match = re.fullmatch(RE_GIT_STATUS, line)
+                if match == None:
+                    log(f'Regex failed to match git status output line "{line}". Aborting...')
+                    return { 'success': False, 'error': f'Regex failed to match git status output line "{line}".' }
+                (x,y,file) = match.groups()
+                log(f'X=[{x}],Y=[{y}],FILE=[{file}]')
+                if y == 'M' and file in GIT_MANIFEST_CONTENT:
+                    num_files_updated += 1 # local modification that needs to be pushed
+            log(f'{num_files_updated} files have been modified and are ready to be committed.')
+            return { 'success': True, 'num_files_updated': num_files_updated }
+        else:
+            log(f'ERROR\n{stderr}')
+            return { 'success': False, 'error': stderr }
+# commit changes
+def git_commit(message='automated update'):
+    log(f'>> git commit -m "{message}"\n')
+    with subprocess.Popen(['git', 'commit', '-m', f'"message"'], cwd='..', stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
+        stdout_raw, stderr_raw = process.communicate()
+        stdout, stderr = stdout_raw.decode(), stderr_raw.decode()
+        if process.returncode == 0:
+            log(stdout)
+            # empty commit => print human-readable `git status`, then "no changes added to commit"
+            if 'no changes added to commit' in stdout:
+                log('No changes detected. Nothing added to commit.')
+                return { 'success': False, 'error': 'No changes detected. Nothing added to commit.' }
+            else:
+                return { 'success': True }
+        else:
+            log(f'ERROR\n{stderr}')
+            return { 'success': False, 'error': stderr }
+# push changes
+def git_push():
+    log(f'>> git push\n')
+    with subprocess.Popen(['git', 'push'], cwd='..', stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
+        stdout_raw, stderr_raw = process.communicate()
+        stdout, stderr = stdout_raw.decode(), stderr_raw.decode()
+        if process.returncode == 0:
+            log(stdout)
+            if stdout == 'Everything up-to-date':
+                log('No changes committed. Nothing to push.')
+                return { 'success': False, 'error': 'No changes committed. Nothing to push.' }
+            else:
+                return { 'success': True }
+        else:
+            log(f'ERROR\n{stderr}')
+            return { 'success': False, 'error': stderr }
+        
+# add/commit/push log file(s)
+    # this gets its own function because log has been terminated
+    # must use normal print statements only
+def git_sync_log():
+    # add
+    files = GIT_MANIFEST_LOGS
+    print(f'Adding {len(files)} files from manifest...')
+    for file in files:
+        print(f'>> git add {file}')
+        with subprocess.Popen(['git', 'add', file], cwd='..', stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
+            stdout_raw, stderr_raw = process.communicate()
+            stdout, stderr = stdout_raw.decode(), stderr_raw.decode()
+            if process.returncode == 0:
+                if stdout != '': print(stdout)
+            else:
+                print(f'ERROR\n{stderr}')
+                return { 'success': False, 'error': stderr }
+    print(f'All files added.')
+    # commit
+    message = 'automated database update (log file)'
+    print(f'>> git commit -m "{message}"\n')
+    with subprocess.Popen(['git', 'commit', '-m', f'"message"'], cwd='..', stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
+        stdout_raw, stderr_raw = process.communicate()
+        stdout, stderr = stdout_raw.decode(), stderr_raw.decode()
+        if process.returncode == 0:
+            print(stdout)
+            # empty commit => print human-readable `git status`, then "no changes added to commit"
+            if 'no changes added to commit' in stdout:
+                print('No changes detected. Nothing added to commit.')
+                return { 'success': False, 'error': 'No changes detected. Nothing added to commit.' }
+        else:
+            print(f'ERROR\n{stderr}')
+            return { 'success': False, 'error': stderr }
+    # push
+    print(f'>> git push\n')
+    with subprocess.Popen(['git', 'push'], cwd='..', stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
+        stdout_raw, stderr_raw = process.communicate()
+        stdout, stderr = stdout_raw.decode(), stderr_raw.decode()
+        if process.returncode == 0:
+            print(stdout)
+            if stdout == 'Everything up-to-date':
+                print('No changes committed. Nothing to push.')
+                return { 'success': False, 'error': 'No changes committed. Nothing to push.' }
+        else:
+            print(f'ERROR\n{stderr}')
+            return { 'success': False, 'error': stderr }
+    # ret
+    return { 'success': True }
+
+
+
+###############################################################################
+
 today = datetime.datetime.now()
 
 log(f'////////')
@@ -851,6 +1125,15 @@ log(f'////////')
 
 def main(IN):
     T0_TOTAL = 1000 * time.perf_counter() # in ms
+
+    # check that git is installed
+    log('Checking git installation...')
+    git_output = git_version()
+    if not git_output['success']: return # exit on error
+    # check the cloud for updates
+    log('Checking for updates to code...')
+    git_output = git_fetch()
+    if not git_output['success']: return # exit on error
 
     # process data
     lines_clean = scrub(IN.read())
@@ -879,9 +1162,8 @@ def main(IN):
         log(f'DONE in {(T1_WRITE-T0_WRITE):.1f} ms')
 
     # build sitemap.txt
-    log(f'Building sitemap for {len(STATIC_PAGES)} static pages, {len(indexL1)} English entries, and {len(indexL2)} Wikchamni entries...')
+    log(f'Building sitemap for {len(STATIC_PAGES)} static pages, {len(indexL1)} English words, and {len(indexL2)} Wikchamni words...')
     T0_SITEMAP = 1000 * time.perf_counter() # in ms
-    # with open(f'{DIR_ROOT}{FILE_SITEMAP}.txt', 'w', encoding='utf-8') as OUT:
     with open(f'..\\{FILE_SITEMAP}.txt', 'w', encoding='utf-8') as OUT:
         log(f'    Builing sitemap.txt...')
         for url in STATIC_PAGES:
@@ -895,7 +1177,6 @@ def main(IN):
             OUT.write(f'{URL_BASE}/lexicon?lang={LANG_WIK}&amp;entry={i}')
             if i < len(indexL2) - 1:
                 OUT.write(f'\n')
-    # with open(f'{DIR_ROOT}{FILE_SITEMAP}.xml', 'w', encoding='utf-8') as OUT:
     with open(f'..\\{FILE_SITEMAP}.xml', 'w', encoding='utf-8') as OUT:
         log(f'    Builing sitemap.xml...')
         OUT.write(f'<?xml version="1.0" encoding="UTF-8"?>\n')
@@ -923,9 +1204,31 @@ def main(IN):
     #         OUT.write(f'{card['word']}\n')
     # log(f'DONE')
 
+    log(f'\n=== Pushing changes to cloud... ===\n')
+
+    # push newly-generated files to the cloud
+    git_output = git_add_all(GIT_MANIFEST_CONTENT)
+    if not git_output['success']: return # exit on error
+    git_output = git_commit('automated database update')
+    if not git_output['success']: return # exit on error
+    git_output = git_push()
+    if not git_output['success']: return # exit on error
+    
     T1_TOTAL = 1000 * time.perf_counter() # in ms
 
+    log(f'\n=== SUMMARY OF TASKS ===\n')
+
+    # print summary
+    # TODO: print summary to log file
     log(f'\nAll tasks DONE in {(T1_TOTAL-T0_TOTAL):.1f} ms')
+
+    # update succeeded, so terminate log file and push it in a second commit
+    git_output = git_sync_log()
+    if not git_output['success']: return # exit on error
+
+    
+
+    
 
 # check for "toolbox-output" (extensionless)
 log('')
