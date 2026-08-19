@@ -1,7 +1,7 @@
 ////////
 //// WIKCHAMNI AUTO-UPDATE SCRIPT
-//// Last run Aug 19 2026 14:19
-//// For web domain https://dev-wikchamnidictionary.library.fresnostate.edu/
+//// Last run Aug 19 2026 14:25
+//// For web domain https://dev-wikchamnidictionary.library.fresnostate.edu
 ////////
 
 Checking for "toolbox-output" (no file extension)...
@@ -17,7 +17,7 @@ Checking for updates to code...
 DONE
 >> git reset --hard origin/auto-update
 
-HEAD is now at cae75ab prep for auto-update test
+HEAD is now at e4c0079 fix typo in site root url
 
 
 
@@ -28,7 +28,7 @@ Normalizing characters and whitespace...
 Rejoining multiline datafields...
 Scrubbing PID from filepaths...
 
-DONE in 120.3 ms
+DONE in 133.8 ms
 
 82 unique field markers encountered across 44493 tokens.
 0 tokens were ill-formed, and 6 tokens were blank.
@@ -37,7 +37,7 @@ Scrubbed 5507 absolute filepaths of potential PID.
 
 === Tokenizing data... ===
 
-DONE in 89.1 ms.
+DONE in 118.8 ms.
 
 0 tokens were ill-formed, and 6 tokens were blank.
 81 unique field markers encountered across all 44487 tokens in tokenstream.
@@ -261,7 +261,7 @@ Parsing runs into entries...
     WARN Headless \xe " 20/Feb/2019" has no \xv to attach to in entry "English" of catg "Part of Speech"
     Attach point was: {'L2': 'Contact:Geoff Gamble -- ggamble@mail.fresnostate.edu', 'form': None}
 
-DONE in 91.0 ms.
+DONE in 77.3 ms.
 
 Detected 4608 standard entries and 712 lexeme entries.
 Detected 9 non-run-starting tokens:
@@ -296,20 +296,20 @@ Indexing standard entries...
 Indexing lexeme entries...
 Sorting entries...
 
-DONE in 159.0 ms.
+DONE in 101.3 ms.
 
 Sorted 5709 L1 words and 13052 L2 words.
 
 === Generating output files... ===
 
 Writing sterilized data back to Toolbox SF...
-DONE in 32.7 ms
+DONE in 20.8 ms
 Baking database into web-compatible JSON...
-DONE in 23.2 ms
+DONE in 17.3 ms
 Building sitemap for 4 static pages, 5709 English words, and 13052 Wikchamni words...
     Builing sitemap.txt...
     Builing sitemap.xml...
-DONE in 28.4 ms
+DONE in 18.2 ms
 
 === Pushing changes to cloud... ===
 
@@ -322,20 +322,17 @@ All files added.
 >> git status --porcelain=v1 -b
 
 ## auto-update...origin/auto-update
-A  assets/data/toolbox-output-clean
-M  assets/data/toolbox-output-clean.json
 M  sitemap-wikchamni.txt
 M  sitemap-wikchamni.xml
  M update/log.txt
 ?? update/toolbox-output
 
-3 files have been modified and are ready to be committed.
+2 files have been modified and are ready to be committed.
 >> git commit -m "automated database update"
 
 AUTO GIT COMMIT
-[auto-update 9280073] automated database update
- 4 files changed, 87344 insertions(+), 37563 deletions(-)
- create mode 100644 assets/data/toolbox-output-clean
+[auto-update 6963a0b] automated database update
+ 2 files changed, 37530 insertions(+), 37530 deletions(-)
 
 >> git push
 
@@ -345,5 +342,5 @@ DONE
 === SUMMARY OF TASKS ===
 
 
-All tasks DONE in 6430.9 ms
+All tasks DONE in 5615.7 ms
 
