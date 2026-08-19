@@ -1,0 +1,4 @@
+# Only include Wikchamni dictionary content in sitemap
+User-agent: *
+Disallow: 
+Sitemap: https://dev-wikchamnidictionary.library.fresnostate.edu/sitemap-wikchamni.xml
