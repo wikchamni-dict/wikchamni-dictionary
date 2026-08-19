@@ -967,7 +967,7 @@ def git_fetch():
             return { 'success': False, 'error': stderr }
     # reset any local modifications/deletions of tracked files to ensure clean working tree
     # (untracked local files will be left untouched)
-    GIT_ORIGIN = 'origin/auto-update'
+    GIT_ORIGIN = 'origin/main'
     log(f'>> git reset --hard {GIT_ORIGIN}\n')
     with subprocess.Popen(['git', 'reset', '--hard', GIT_ORIGIN], cwd='..', stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
         stdout_raw, stderr_raw = process.communicate()
