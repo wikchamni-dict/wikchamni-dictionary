@@ -45,8 +45,9 @@ FILE_DATABASE_INPUT = 'toolbox-output'
 
 # root directory of website where dictionary is hosted
     # must be absolute url with FQDN and protocol (ex. https://example.com or https://example.com/wikchamni)
+    # must NOT include trailing slash
 # URL_BASE = 'https://ssirrikh.github.io/wikchamni'
-URL_BASE = 'https://dev-wikchamnidictionary.library.fresnostate.edu/'
+URL_BASE = 'https://dev-wikchamnidictionary.library.fresnostate.edu'
 
 
 
