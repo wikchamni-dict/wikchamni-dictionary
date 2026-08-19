@@ -112,10 +112,22 @@ RE_SYNONYM_SPLITTER = re.compile(r';\s*')
 SYNONYM_JOIN = '; '
 
 # helpers
-logfile = open(f'{FILE_LOG}.txt', 'w', encoding='utf-8')
+USE_BUFFER_LOG = False
+logfile = None
+logbuff = ''
+def open_logfile():
+    global logfile
+    logfile = open(f'{FILE_LOG}.txt', 'w', encoding='utf-8')
+def close_logfile():
+    global logfile
+    logfile.close()
 def log(text='', quiet=False):
     if not quiet: print(text)
-    logfile.write(f'{text}\n')
+    if USE_BUFFER_LOG:
+        global logbuff
+        logbuff += f'{text}\n'
+    else:
+        logfile.write(f'{text}\n')
 
 
 ###############################################################################
@@ -912,9 +924,9 @@ def git_version():
             return { 'success': False, 'error': stderr }
 # check remote for new commits
 def git_fetch():
-    log(f'STUB >> git fetch')
-    log(f'STUB >> git reset --hard origin/main\n')
-    return { 'success': True }
+    # log(f'STUB >> git fetch')
+    # log(f'STUB >> git reset --hard origin/main\n')
+    # return { 'success': True }
 
     # automated updates to data should generally be performed from main branch
     # however, the check enforcing this as a hard requirement has been disabled for flexibility
@@ -977,8 +989,9 @@ def git_fetch():
             return { 'success': False, 'error': stderr }
     # reset any local modifications/deletions of tracked files to ensure clean working tree
     # (untracked local files will be left untouched)
-    log(f'>> git reset --hard origin/main\n')
-    with subprocess.Popen(['git', 'reset', '--hard', 'origin/main'], cwd='..', stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
+    GIT_ORIGIN = 'origin/main'
+    log(f'>> git reset --hard {GIT_ORIGIN}\n')
+    with subprocess.Popen(['git', 'reset', '--hard', GIT_ORIGIN], cwd='..', stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
         stdout_raw, stderr_raw = process.communicate()
         stdout, stderr = stdout_raw.decode(), stderr_raw.decode()
         if process.returncode == 0:
@@ -989,6 +1002,7 @@ def git_fetch():
         else:
             log(f'ERROR\n{stderr}')
             return { 'success': False, 'error': stderr }
+    return { 'success': True }
 # add all files in manifest
 def git_add_all(files=[]):
     log(f'Adding {len(files)} files from manifest...')
@@ -1015,13 +1029,14 @@ def git_status():
             num_files_updated = 0
             lines = re.split('\n', stdout)
             for line in lines:
+                if line == '': continue
                 match = re.fullmatch(RE_GIT_STATUS, line)
                 if match == None:
                     log(f'Regex failed to match git status output line "{line}". Aborting...')
                     return { 'success': False, 'error': f'Regex failed to match git status output line "{line}".' }
                 (x,y,file) = match.groups()
-                log(f'X=[{x}],Y=[{y}],FILE=[{file}]')
-                if y == 'M' and file in GIT_MANIFEST_CONTENT:
+                # log(f'X=[{x}],Y=[{y}],FILE=[{file}]')
+                if x == 'M' and file in GIT_MANIFEST_CONTENT:
                     num_files_updated += 1 # local modification that needs to be pushed
             log(f'{num_files_updated} files have been modified and are ready to be committed.')
             return { 'success': True, 'num_files_updated': num_files_updated }
@@ -1031,10 +1046,11 @@ def git_status():
 # commit changes
 def git_commit(message='automated update'):
     log(f'>> git commit -m "{message}"\n')
-    with subprocess.Popen(['git', 'commit', '-m', f'"message"'], cwd='..', stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
+    with subprocess.Popen(['git', 'commit', '-m', message], cwd='..', stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
         stdout_raw, stderr_raw = process.communicate()
         stdout, stderr = stdout_raw.decode(), stderr_raw.decode()
         if process.returncode == 0:
+            log('AUTO GIT COMMIT')
             log(stdout)
             # empty commit => print human-readable `git status`, then "no changes added to commit"
             if 'no changes added to commit' in stdout:
@@ -1043,6 +1059,7 @@ def git_commit(message='automated update'):
             else:
                 return { 'success': True }
         else:
+            log(f'AUTO GIT COMMIT STDOUT\n{stderr}')
             log(f'ERROR\n{stderr}')
             return { 'success': False, 'error': stderr }
 # push changes
@@ -1057,6 +1074,7 @@ def git_push():
                 log('No changes committed. Nothing to push.')
                 return { 'success': False, 'error': 'No changes committed. Nothing to push.' }
             else:
+                log('DONE')
                 return { 'success': True }
         else:
             log(f'ERROR\n{stderr}')
@@ -1083,7 +1101,7 @@ def git_sync_log():
     # commit
     message = 'automated database update (log file)'
     print(f'>> git commit -m "{message}"\n')
-    with subprocess.Popen(['git', 'commit', '-m', f'"message"'], cwd='..', stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
+    with subprocess.Popen(['git', 'commit', '-m', message], cwd='..', stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
         stdout_raw, stderr_raw = process.communicate()
         stdout, stderr = stdout_raw.decode(), stderr_raw.decode()
         if process.returncode == 0:
@@ -1105,6 +1123,9 @@ def git_sync_log():
             if stdout == 'Everything up-to-date':
                 print('No changes committed. Nothing to push.')
                 return { 'success': False, 'error': 'No changes committed. Nothing to push.' }
+            else:
+                print('DONE')
+                return { 'success': True }
         else:
             print(f'ERROR\n{stderr}')
             return { 'success': False, 'error': stderr }
@@ -1116,6 +1137,9 @@ def git_sync_log():
 ###############################################################################
 
 today = datetime.datetime.now()
+
+# log to buffer until repo has reset
+USE_BUFFER_LOG = True
 
 log(f'////////')
 log(f'//// WIKCHAMNI AUTO-UPDATE SCRIPT')
@@ -1135,6 +1159,13 @@ def main(IN):
     git_output = git_fetch()
     if not git_output['success']: return # exit on error
 
+    # switch to main log file once repo reset complete
+    global USE_BUFFER_LOG
+    USE_BUFFER_LOG = False
+    global logfile
+    open_logfile()
+    log(logbuff)
+
     # process data
     lines_clean = scrub(IN.read())
     tokenstream,tokencounts = tokenize(lines_clean)
@@ -1144,7 +1175,7 @@ def main(IN):
     log(f'\n=== Generating output files... ===\n')
 
     # write clean Toolbox SF output
-    with open(f'..\\assets\\data\\{FILE_DATABASE_OUTPUT}.txt', 'w', encoding='utf-8') as OUT:
+    with open(f'..\\assets\\data\\{FILE_DATABASE_OUTPUT}', 'w', encoding='utf-8') as OUT:
         T0_WRITE = 1000 * time.perf_counter() # in ms
         log(f'Writing sterilized data back to Toolbox SF...')
         for i,line in enumerate(lines_clean):
@@ -1209,24 +1240,45 @@ def main(IN):
     # push newly-generated files to the cloud
     git_output = git_add_all(GIT_MANIFEST_CONTENT)
     if not git_output['success']: return # exit on error
-    git_output = git_commit('automated database update')
-    if not git_output['success']: return # exit on error
-    git_output = git_push()
-    if not git_output['success']: return # exit on error
+    git_output = git_status()
+    if git_output['num_files_updated'] == 0:
+        log('\nNo changes detected. Nothing to commit or push.\n')
+    else:
+        git_output = git_commit('automated database update')
+        if not git_output['success']: return # exit on error
+        git_output = git_push()
+        if not git_output['success']: return # exit on error
     
     T1_TOTAL = 1000 * time.perf_counter() # in ms
 
     log(f'\n=== SUMMARY OF TASKS ===\n')
 
-    # print summary
-    # TODO: print summary to log file
-    log(f'\nAll tasks DONE in {(T1_TOTAL-T0_TOTAL):.1f} ms')
+    # TODO: print summary of work
+        # pre-processing
+            # multiline fields rejoined
+            # PID scrubbed
+            # (list of fields and occurences)
+        # tokenizer
+            # ill-formed
+            # blank
+            # (list of fields and occurences)
+        # parser
+            # (runs)
+            # (unparsed tokens)
+        # indexer/sorter
+            # num standard vs lexeme entries
+            # num entries with audio/image
+            # num L1 vs L2 entries
+        # [possibly read prev sitemap.txt to detect addition/removal of words/entries]
+    log(f'\nAll tasks DONE in {(T1_TOTAL-T0_TOTAL):.1f} ms\n')
 
     # update succeeded, so terminate log file and push it in a second commit
+    close_logfile()
     git_output = git_sync_log()
     if not git_output['success']: return # exit on error
 
-    
+    print('\nALL WORK DONE')
+    print('PROGRAM TERMINATES SUCCESSFULLY')
 
     
 
