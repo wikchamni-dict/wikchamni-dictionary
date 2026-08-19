@@ -10,6 +10,8 @@ const IMG_404 = `assets/images/404.png`;
 // enum
 const CARD_TYPE_ENTRY = false;
 const CARD_TYPE_LEXEME = true;
+const LANG_WIK = 'wk';
+const LANG_ENG = 'en';
 
 // regex
 const RE_SYNONYM_SPLITTER = /;\s*/;
@@ -17,10 +19,46 @@ const SYNONYM_JOIN = '; ';
 
 // ling data
 const CATG_ABBRS = Object.freeze({
+    'Part of Speech' : '',
+    'exclamation' : 'Excl',
+    'interjection' : 'Intj',
+    'interjection ' : 'Intj',
+    'n-proper' : 'PN',
     'n-theme' : 'N-Thm',
     'prn-theme' : 'P-Thm',
-    'v-theme' : 'V-Thm',
+    'prt.imit' : 'ImitP',
     'v-base' : 'VB',
+    'v-phrase' : 'VP',
+    'v-theme' : 'V-Thm',
+});
+const CATG_NAMES = Object.freeze({
+    '' : 'No part of speech given',
+    'Part of Speech' : 'No part of speech given',
+    'adv' : 'Adverb',
+    'afx' : 'Affix',
+    'conj' : 'Conjugation',
+    'dem-prn' : 'Demonstrative Pronoun',
+    'exclamation' : 'Exclamation',
+    'int-prn' : 'Interrogative Pronoun',
+    'interjection' : 'Interjection',
+    'interjection ' : 'Interjection',
+    'n' : 'Noun',
+    'n ' : 'Noun',
+    'n-proper' : 'Proper Noun',
+    'n-theme' : 'Noun Theme',
+    'n-theme ' : 'Noun Theme',
+    'prn' : 'Pronoun',
+    'prn-theme' : 'Pronoun Theme',
+    'prt' : 'Particle',
+    'prt.imit' : 'Imitative Particle',
+    'v' : 'Verb',
+    'v ' : 'Verb',
+    'V' : 'Verb',
+    'v-base' : 'Verb Base',
+    'v-base ' : 'Verb Base',
+    'v-phrase' : 'Verb Phrase',
+    'v-theme' : 'Verb Theme',
+    'v-theme ' : 'Verb Theme',
 });
 const MSG_COPYCHAR_DEFAULT = `Click to insert.`;
 const MSG_COPYCHAR_TEMPLATE = `Click to insert, or type`;
@@ -120,6 +158,86 @@ let audioPlayer = {
 
 
 
+// param handlers
+const tryGetDefaultEntry = () => {
+    // straw grass (acc) č'akši [3 forms, 1 sent]
+    // clover č'it'at' [2 forms, 2 sents]
+    // digging roots (dur pres) hopʰtat [2 forms, 2 sents]
+    // mountain balm (cons adju) kiṭ'inʔiy [2 forms, 1 sent]
+    // baskets (acc) k'ač'iwhat [2 forms, 2 sents]
+    // weaving (neutral v n acc) tixta [2 forms, 2 sents]
+    // elderberry (abs) wiše·tʰaʔ [2 forms, 1 sent]
+    for (let i = 0; i < indexL1.length; i++) {
+        // toolbox output may shuffle order of entries and does not provide id numbers
+        // only way to reliably target an entry is to manually search for it
+        // the word "clover" is chosen for its unambiguity: only one entry currently has L1 "clover" and an example with audio
+        if (indexL1[i].word == 'clover' && indexL1[i].hasAudio) {
+            console.log(`Loading initial entry "${indexL1[i].word}" (${indexL1[i].catg}) id ${indexL1[i].id}`);
+            return indexL1[i];
+            // eSearchGotoEntryButton.textContent = indexL1[i].word;
+            // renderEntryFor(indexL1[i]);
+            // break;
+        }
+    }
+    return null;
+};
+const tryGetEntryFromParams = () => {
+    // get url params
+    if (!window.location.search) {
+        console.log(`No url params detected.`);
+        return null;
+    }
+    const paramsObj = new URLSearchParams(window.location.search);
+    const params = {
+        lang : paramsObj.get('lang') || '',
+        entry : paramsObj.get('entry') || -1,
+    };
+    console.log(params);
+    // check lang
+    if (params.lang !== LANG_WIK && params.lang !== LANG_ENG) {
+        console.log( (params.lang === '')
+            ? 'No language specified.'
+            : `"${params.lang}" is not a recognized language. Options are "${LANG_ENG}" for English or "${LANG_WIK}" for Wikchamni.`
+        );
+        return null;
+    }
+    // check entry
+    if (params.entry < 0) {
+        console.log('Detected request for default entry.');
+        return null;
+    }
+    const activeIndex = (params.lang === LANG_WIK) ? indexL2 : indexL1;
+    if (activeIndex.length === 0) {
+        console.log('No entries in specified language.');
+        return null;
+    }
+    return activeIndex[Math.min(params.entry, activeIndex.length-1)];
+};
+const setParamsFromEntry = (lang,entryId=0) => {
+    if (lang !== LANG_WIK && lang !== LANG_ENG) {
+        console.error(`"${lang}" is not a recognized language. Options are "${LANG_ENG}" for English or "${LANG_WIK}" for Wikchamni.`);
+        return false;
+    }
+    const activeIndex = (lang === LANG_WIK) ? indexL2 : indexL1;
+    // check for out of bounds entry
+    if (activeIndex.length === 0 || entryId < 0) {
+        entryId = -1;
+    } else if (entryId >= activeIndex.length) {
+        entryId = activeIndex.length - 1;
+    }
+    // construct url param string
+    history.pushState({}, '', `?lang=${lang}&entry=${entryId}`);
+    return true;
+    // const oldParamStr = window.location.search;
+    // const paramStr = `?lang=${lang}&entry=${entryId}`;
+    // console.log(`Setting url params to "${paramStr}" from entry: ${activeIndex[entryId]}`);
+    // history.pushState({}, "", paramStr);
+    // console.log(`Params "${oldParamStr}" -> "${window.location.search}"`);
+    // return true;
+};
+
+
+
 //// INDEX DATA ///////////////////////////////////////////////////////////////
 
 let indexL1 = []; // index[entryId] = IndexCard{}; alphabetized by case-insensative (word,catg)
@@ -168,7 +286,7 @@ const indexEntries = (parse) => {
         // scan words
         for (let raw of parse.entries[i].L1 ?? []) {
             const synonyms = raw.split(RE_SYNONYM_SPLITTER);
-            if (synonyms.length > 1) console.error(`The word "${raw}" in L1 of entry ${i} conatined semicolon-separated words.`);
+            if (synonyms.length > 1) console.error(`The word "${raw}" in L1 of entry ${i} contained semicolon-separated words.`);
             for (let L1 of synonyms) {
                 indexL1.push(
                     IndexCard(CARD_TYPE_ENTRY,i,L1,parse.entries[i].catg,hasAudio,hasImages)
@@ -177,7 +295,7 @@ const indexEntries = (parse) => {
         }
         for (let raw of parse.entries[i].L2 ?? []) {
             const synonyms = raw.L2.split(RE_SYNONYM_SPLITTER);
-            if (synonyms.length > 1) console.error(`The word "${raw}" in L2 of entry ${i} conatined semicolon-separated words.`);
+            if (synonyms.length > 1) console.error(`The word "${raw}" in L2 of entry ${i} contained semicolon-separated words.`);
             for (let L2 of synonyms) {
                 indexL2.push(
                     IndexCard(CARD_TYPE_ENTRY,i,L2,parse.entries[i].catg,hasAudio,hasImages)
@@ -229,8 +347,15 @@ const indexEntries = (parse) => {
         }
     }
 };
-const populateIndexDOMElementsFor = (index) => {
-    for (let card of index) {
+const populateIndexDOMElementsFor = (lang=LANG_ENG) => {
+    if (lang !== LANG_WIK && lang != LANG_ENG) {
+        console.error(`"${lang}" is not a recognized language. Options are "${LANG_ENG}" for English or "${LANG_WIK}" for Wikchamni.`);
+        return false;
+    }
+    console.log(`Populating index DOM elements for "${lang}"`);
+    const index = (lang === LANG_WIK) ? indexL2 : indexL1;
+    for (let i = 0; i < index.length; i++) {
+        const card = index[i];
         const entry = (card.isLexeme) ? parse.lexemes[card.id] : parse.entries[card.id];
         if (!entry) {
             console.error(`Index card points to ${(card.isLexeme?'lexeme ':'')}entry that doesn't exist.`, card);
@@ -238,8 +363,11 @@ const populateIndexDOMElementsFor = (index) => {
         }
         card.domElement = document.getElementById('tpl-search-result').content.firstElementChild.cloneNode(true);
         const e = card.domElement;
+        e.href = `lexicon?lang=${lang}&entry=${i}`;
         e.querySelector('.search-result-catg').textContent = CATG_ABBRS[card.catg] ?? capitalize(card.catg);
+        e.querySelector('.search-result-catg').title = CATG_NAMES[card.catg] ?? capitalize(card.catg);
         e.querySelector('.search-result-word').textContent = card.word;
+        e.querySelector('.search-result-word').title = `${(lang === LANG_WIK)?'Wikchamni':'English'} entry ${i}`;
         if (card.hasImages) {
             e.querySelector('.icon:nth-of-type(1)').classList.add('icon-image');
             e.querySelector('.icon:nth-of-type(1)').title = 'Has image(s)';
@@ -248,15 +376,22 @@ const populateIndexDOMElementsFor = (index) => {
             e.querySelector('.icon:nth-of-type(2)').classList.add('icon-audio');
             e.querySelector('.icon:nth-of-type(2)').title = 'Has audio';
         }
-        e.onclick = () => {
+        e.onclick = (evt) => {
+            evt.preventDefault(); // if JS is enabled, block normal <a> nav in favor of fast SPA nav
             console.log(`Rendering ${(card.isLexeme?'lexeme ':'')}entry ${card.id} for "${card.word}" (${card.catg})`);
+            setParamsFromEntry(lang, i);
             eSearchGotoEntryButton.textContent = card.word;
             renderEntryFor(card);
             focusEntry();
         };
-        // manually build ARIA-accessible description, since multiple spans inside button is freaking out some screen readers
-        e.ariaLabel = `${card.catg} ${card.word} ${(card.hasImages)?'Has image':''} ${(card.hasAudio)?'Has audio':''}`;
+        // manually build ARIA-accessible description
+        // this gives customizable read-order and avoids screenreader issues with focus management, double-reading, and wrongful reading of icons with title hovertext
+        let ariaFrags = [card.word, CATG_NAMES[card.catg] ?? card.catg];
+        if (card.hasImages) ariaFrags.push('has image');
+        if (card.hasAudio) ariaFrags.push('has audio');
+        e.ariaLabel = ariaFrags.join(', ');
     }
+    return true;
 };
 
 
@@ -562,10 +697,7 @@ const populateCopychars = () => {
 search.domElement.addEventListener('keydown', evt => {
     if (!altDown) return;
     for (let c in COPYCHARS) {
-        // console.log(`${evt.key} in ${COPYCHARS[c].shortcuts}?`);
-        // console.log(`Index is ${COPYCHARS[c].shortcuts?.indexOf(evt.key)}`);
         if (COPYCHARS[c].shortcuts?.indexOf(evt.key) === -1) continue;
-        // console.log('YES');
         evt.preventDefault();
         insertCharInSearchbar(c);
         return;
@@ -579,16 +711,6 @@ eSearchFiltersModal.onclick = (evt) => {
         toggleSearchFiltersModal(); // close modal if we click on its transparent background
     }
 };
-// window.onclick = (evt) => {
-//     // prevents opening filters, since filters button opens modal first, then this fires and immediately closes it
-//     console.log(`Search filters visible? ${!eSearchFiltersModal.classList.contains('hidden')}`);
-//     if (
-//         !eSearchFiltersModal.classList.contains('hidden') // modal visible?
-//         && !eSearchFiltersModal.querySelector('.modal-content').contains(evt.target) // clicked outside content?
-//     ) {
-//         toggleSearchFiltersModal(); // close search filters modal if we click outside its content
-//     }
-// };
 eSearchFiltersModal.querySelector('#filters-catgs-all').onclick = () => search.filters.reset();
 for (let catg of CATGS) {
     search.filters.catgs[catg].domElement.onclick = () => {
@@ -625,7 +747,6 @@ const renderEntryFor = (card) => {
         console.warn(`Card does not point to a valid ${(card.isLexeme?'lexeme ':'')}entry. Nothing to render.`);
         return;
     }
-    // console.log(entry);
     // header (L1, catg, headword)
     const eng = entry?.L1.join(SYNONYM_JOIN);
     const wik = entry?.L2[0]?.L2;
@@ -705,7 +826,6 @@ const renderEntryFor = (card) => {
     // related words
     eEntryDisplay.querySelector('.entry-lexemes').textContent = '';
 
-    // TODO: display images
     // TODO: in lexeme entries, link non-underlying words to standard entries (else color red)
     // TODO: in standard entries, link underlying words to lexeme entries (else color red)
 };
@@ -723,6 +843,7 @@ const focusSearch = () => {
         // unknown how to prevent entirely, since failures are dependent on browser implementation and device lag
         // failure does not give error, so we must rely on fact that button isn't clickable unless focus transfer failed
         // re-adding and re-removing activation class with two separate user actions resets panel (chaining and requestAnimationFrame() don't trigger refresh)
+        // hope is that user clicks (first input primes), thinks they missed when nothing visible happens, then clicks again (second input clears)
         eEntryDisplay.classList.add('focus');
         console.log('entry got stuck open; performed reset');
     }
@@ -752,32 +873,22 @@ const t3_page = performance.now();
 console.log(`Entries alphabetized in ${Math.round(t3_page-t2_page)} ms.`);
 
 // build global dynamic page elements
-populateCopychars();
+// populateCopychars(); // hard-coded into html; only rerun if new special chars added
 search.filters.render();
 eSearchDisplay.querySelector('#search-goto-entry .goto-button').onclick = focusEntry;
 eEntryDisplay.querySelector('#entry-goto-search .goto-button').onclick = focusSearch;
 // build L1 dynamic page elems and load initial entry
-populateIndexDOMElementsFor(indexL1);
+populateIndexDOMElementsFor(LANG_ENG);
 search.domElement.value = ''; // need to reset input text for consistency, since we can't save begins-contains-ends state
 search.populate();
 // load initial entry
-    // straw grass (acc) č'akši [3 forms, 1 sent]
-    // clover č'it'at' [2 forms, 2 sents]
-    // digging roots (dur pres) hopʰtat [2 forms, 2 sents]
-    // mountain balm (cons adju) kiṭ'inʔiy [2 forms, 1 sent]
-    // baskets (acc) k'ač'iwhat [2 forms, 2 sents]
-    // weaving (neutral v n acc) tixta [2 forms, 2 sents]
-    // elderberry (abs) wiše·tʰaʔ [2 forms, 1 sent]
-for (let i = 0; i < indexL1.length; i++) {
-    // toolbox output may shuffle order of entries and does not provide id numbers
-    // only way to reliably target an entry is to manually search for it
-    // the word "clover" is chosen for its unambiguity: only one entry currently has L1 "clover" and an example with audio
-    if (indexL1[i].word == 'clover' && indexL1[i].hasAudio) {
-        console.log(`Loading initial entry "${indexL1[i].word}" (${indexL1[i].catg}) id ${indexL1[i].id}`);
-        eSearchGotoEntryButton.textContent = indexL1[i].word;
-        renderEntryFor(indexL1[i]);
-        break;
-    }
+let initialEntry = tryGetEntryFromParams() || tryGetDefaultEntry();
+if (!initialEntry) {
+    console.log(`Unable to load initial entry.`);
+    // [set status text to "Unable to load initial entry"]
+} else {
+    eSearchGotoEntryButton.textContent = initialEntry.word;
+    renderEntryFor(initialEntry);
 }
 const t4_page = performance.now();
 eNumResults.textContent = `${(search.toggleLang)?indexL2.length:indexL1.length} entries`;
@@ -790,10 +901,26 @@ console.log(`Page fully rendered after ${Math.round(t4_page-t0_page)} ms. (Data 
 requestAnimationFrame(() => {
     const t5_page = performance.now();
     // build L2 dynamic page elems
-    populateIndexDOMElementsFor(indexL2);
+    populateIndexDOMElementsFor(LANG_WIK);
     const t6_page = performance.now();
     console.log(`${Math.round(t6_page-t5_page)} ms of work was deferred by ${Math.round(t5_page-t4_page)} ms to allow for final contentful render.`);
     console.log(`All loading done in ${Math.round(t6_page-t0_page)} ms`);
+
+    // statistics and self-analysis
+    let unhandledCatgs = {};
+    let numL1EntriesWithAudio = 0;
+    let numL1EntriesWithImage = 0;
+    for (let card of indexL1) {
+        if (card.hasAudio) numL1EntriesWithAudio++;
+        if (card.hasImages) numL1EntriesWithImage++;
+        if (!CATG_NAMES[card.catg]) unhandledCatgs[card.catg] = true;
+        // if (card.catg == 'prt.imit') console.log(card);
+    }
+    console.log(`${numL1EntriesWithAudio} / ${indexL1.length} entries have audio`);
+    console.log(`${numL1EntriesWithImage} / ${indexL1.length} entries have images`);
+    if (Object.keys(unhandledCatgs).length > 0) {
+        console.warn(`The followings catgs don't have prettyprint names: [${Object.keys(unhandledCatgs).join(', ')}]. Add them to the CATG_NAMES lookup table.`);
+    }
 });
 
 
