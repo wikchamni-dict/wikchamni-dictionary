@@ -544,7 +544,7 @@ const parse = (text) => {
 
 const loadDatabase = async () => {
 	const t0_fetch = performance.now();
-    const filename = './assets/data/toolbox-output-clean.txt';
+    const filename = './assets/data/toolbox-output-clean';
     try {
         const res = await fetch(filename);
         if (!res.ok) {

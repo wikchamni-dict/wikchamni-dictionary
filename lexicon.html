@@ -17,7 +17,7 @@
 		<link rel="shortcut icon" href="favicon.ico" type="image/vnd.microsoft.icon" />
 		<link rel="stylesheet" href="assets/css/common.css">
 		<!-- Google tag (gtag.js) -->
-		<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-4M1HFRESQ7"></script>
+		<script async src="https://www.googletagmanager.com/gtag/js?id=G-4M1HFRESQ7"></script>
 		<script>
 			window.dataLayer = window.dataLayer || [];
 			function gtag(){dataLayer.push(arguments);}
@@ -25,7 +25,7 @@
 
 			gtag('config', 'G-4M1HFRESQ7');
 			gtag('config', 'UA-5613790-32');
-		</script> -->
+		</script>
 		<style>
 			:root {
 				--dbg: #f0f;
@@ -304,8 +304,8 @@
 			#search-filters:focus-visible {
 				outline: medium solid var(--dark);
 			}
-			#search-filters:hover> svg {
-				color: var(--bg-tint);
+			#search-filters:hover > svg {
+				/* color: var(--bg-tint); */
 				/* outline: thin solid var(--highlight-dark); */
 				/* background-color: var(--highlight-dark) !important; */
 			}
@@ -378,6 +378,7 @@
 				padding: 0.3em;
 				padding-left: 0.25em;
 				gap: 0.2em;
+				text-decoration: none;
 			}
 			.search-result:hover {
 				background-color: white;
@@ -765,7 +766,7 @@
 							<button id='search-pattern-ends' role='radio' aria-checked='false' aria-label='Search for words ending with x'><span aria-hidden='true'>Ends</span></button>
 						</div>
 						<div class='flex-col pos-anchor'>
-							<input id='searchbar' type='text' placeholder='Search...'>
+							<input id='searchbar' type='text' placeholder='Search...' aria-labelledby='dictionary-search'>
 							<div id='searchbar-actions-left' class='flex-row-centered'>
 								<button id='search-filters' class='flex-centered' title='Search filters'>
 									<svg id='nav-hamburger' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' width='24' height='24' stroke-width='1.5' aria-hidden='true'>
@@ -782,10 +783,15 @@
 							</div>
 						</div>
 						<div id='search-copy-chars' class='flex-row flex-centered'>
-							<!-- <button>a</button>
-							<button>b</button>
-							<button>c</button>
-							<button>d</button> -->
+							<button title='[č] is pronounced like the &quot;ch&quot; in &quot;church&quot;. Click to insert, or type Alt+C'>č</button>
+							<button title='[ŋ] is pronounced like the &quot;ng&quot; in &quot;sing&quot;. Click to insert, or type Alt+N'>ŋ</button>
+							<button title='[š] is pronounced like the &quot;sh&quot; in &quot;shirt&quot;. Click to insert, or type Alt+S'>š</button>
+							<button title='[ṭ] is pronounced like the &quot;tr&quot; in &quot;train&quot;. Click to insert, or type Alt+T'>ṭ</button>
+							<button title='[ʔ] is pronounced like the break between sounds in &quot;uh-oh&quot;. Click to insert, or type Alt+?'>ʔ</button>
+							<button title='[ʰ] makes the previous consonant aspirated. You should feel a puff of air in front of your lips while saying [tʰap], but not [tap]. Click to insert, or type Alt+H'>ʰ</button>
+							<button title='[ə] is pronounced like the &quot;e&quot; in &quot;egg&quot;, but with rounded lips. Click to insert, or type Alt+E'>ə</button>
+							<button title='[ɨ] is pronounced like the &quot;i&quot; in &quot;big&quot;, but with rounded lips. Click to insert, or type Alt+I'>ɨ</button>
+							<button title='[·] makes the previous vowel twice as long. Click to insert, or type Alt+.'>·</button>
 						</div>
 					</div>
 					<div id='search-results-wrapper' class='flex-col flex-shrink flex-grow'>
@@ -893,36 +899,44 @@
 		</div>
 
 		<!-- templates -->
-		<template id='tpl-search-result'>
-			<button class='flex-row-centered search-result'>
 				<!-- if button has aria-label and all contents are aria-hidden, then label gets read twice -->
 				<!-- if text spans are visible and div/span icon is hidden, icon will still get focused by screen reader -->
 				<!-- if all button contents are visible, icons get read as "Has audio group", then get focused and read a second time -->
-				<!-- <span class='search-result-catg'>catg</span>
-				<span class='search-result-word'>word</span>
-				<span class='icon'></span>
-				<span class='icon'></span> -->
-
+			<!-- <button class='flex-row-centered search-result'>
 				<span class='search-result-catg' aria-hidden='true'>catg</span>
 				<span class='search-result-word' aria-hidden='true'>word</span>
 				<div class='icon' aria-hidden='true'></div>
 				<div class='icon' aria-hidden='true'></div>
-			</button>
+			</button> -->
+			<!-- <a> with evt.preventDefault() in onclick will do fast SPA nav w/ JS, but is usable by crawlers and still acts as link if JS fails -->
+			<!-- <a class='flex-row-centered search-result'>
+				<span class='search-result-catg' aria-hidden='true'>catg</span>
+				<span class='search-result-word' aria-hidden='true'>word</span>
+				<div class='icon' aria-hidden='true'></div>
+				<div class='icon' aria-hidden='true'></div>
+			</a> -->
+		<template id='tpl-search-result'>
+			<a class='search-result'>
+				<div class='flex-row-centered'>
+					<span class='search-result-catg' aria-hidden='true'>catg</span>
+					<span class='search-result-word' aria-hidden='true'>word</span>
+					<div class='icon' aria-hidden='true'></div>
+					<div class='icon' aria-hidden='true'></div>
+				</div>
+			</a>
 		</template>
 		<template id='tpl-entry-L2'>
 			<div class='flex-row-centered entry-L2'>
-				<p class='entry-L2-form'>form</p>
-				<p class='entry-L2-word flex-shrink'>[no Wikchamni translation]</p>
-				<!-- <button class='icon icon-dbg'></button> -->
+				<p class='entry-L2-form' lang='en'>form</p>
+				<p class='entry-L2-word flex-shrink' lang='yok'>[no Wikchamni translation]</p>
 			</div>
 		</template>
 		<template id='tpl-entry-example'>
 			<div class='flex-col entry-example'>
 				<div class='flex-row-centered'>
-					<p class='entry-example-L2'>[no Wikchamni translation]</p>
-					<!-- <button class='icon icon-dbg'></button> -->
+					<p class='entry-example-L2' lang='yok'>[no Wikchamni translation]</p>
 				</div>
-				<p class='entry-example-L1'>[no English translation]</p>
+				<p class='entry-example-L1' lang='en'>[no English translation]</p>
 			</div>
 		</template>
 		<!-- <template id='tpl-audio-button'>
