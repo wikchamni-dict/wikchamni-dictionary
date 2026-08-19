@@ -1,6 +1,6 @@
 ////////
 //// WIKCHAMNI AUTO-UPDATE SCRIPT
-//// Last run Aug 19 2026 15:45
+//// Last run Aug 19 2026 15:51
 //// For web domain https://dev-wikchamnidictionary.library.fresnostate.edu
 ////////
 
@@ -17,7 +17,7 @@ Checking for updates to code...
 DONE
 >> git reset --hard origin/main
 
-HEAD is now at 390d791 Merge pull request #4 from wikchamni-dict/auto-update
+HEAD is now at aa7f861 automated database update (log file)
 
 
 
@@ -28,19 +28,19 @@ Normalizing characters and whitespace...
 Rejoining multiline datafields...
 Scrubbing PID from filepaths...
 
-DONE in 85.0 ms
+DONE in 88.3 ms
 
-82 unique field markers encountered across 44494 tokens.
+82 unique field markers encountered across 44489 tokens.
 0 tokens were ill-formed, and 6 tokens were blank.
 Rejoined 836 multiline tokens.
 Scrubbed 5507 absolute filepaths of potential PID.
 
 === Tokenizing data... ===
 
-DONE in 42.3 ms.
+DONE in 43.4 ms.
 
 0 tokens were ill-formed, and 6 tokens were blank.
-81 unique field markers encountered across all 44488 tokens in tokenstream.
+81 unique field markers encountered across all 44483 tokens in tokenstream.
 
 === Parsing tokenstream... ===
 
@@ -261,12 +261,12 @@ Parsing runs into entries...
     WARN Headless \xe " 20/Feb/2019" has no \xv to attach to in entry "English" of catg "Part of Speech"
     Attach point was: {'L2': 'Contact:Geoff Gamble -- ggamble@mail.fresnostate.edu', 'form': None}
 
-DONE in 45.7 ms.
+DONE in 52.6 ms.
 
-Detected 4608 standard entries and 712 lexeme entries.
+Detected 4607 standard entries and 712 lexeme entries.
 Detected 9 non-run-starting tokens:
-    "ps" : 5320 occurences
-    "ge" : 5654 occurences
+    "ps" : 5319 occurences
+    "ge" : 5653 occurences
     "sf" : 3347 occurences
     "xe" : 2266 occurences
     "sfx" : 2122 occurences
@@ -275,7 +275,7 @@ Detected 9 non-run-starting tokens:
     "pd" : 5 occurences
     "pdv" : 89 occurences
 14 token types were completely unhandled:
-    "dt" : 5283 occurences
+    "dt" : 5282 occurences
     "nt" : 719 occurences (PRUNED NOTE)
     "sc" : 35 occurences (PRUNED NOTE)
     "nd" : 1 occurences (PRUNED NOTE)
@@ -296,20 +296,20 @@ Indexing standard entries...
 Indexing lexeme entries...
 Sorting entries...
 
-DONE in 76.1 ms.
+DONE in 79.4 ms.
 
-Sorted 5709 L1 words and 13052 L2 words.
+Sorted 5708 L1 words and 13051 L2 words.
 
 === Generating output files... ===
 
 Writing sterilized data back to Toolbox SF...
-DONE in 14.6 ms
+DONE in 16.4 ms
 Baking database into web-compatible JSON...
-DONE in 12.7 ms
-Building sitemap for 4 static pages, 5709 English words, and 13052 Wikchamni words...
+DONE in 14.1 ms
+Building sitemap for 4 static pages, 5708 English words, and 13051 Wikchamni words...
     Builing sitemap.txt...
     Builing sitemap.xml...
-DONE in 15.1 ms
+DONE in 13.9 ms
 
 === Pushing changes to cloud... ===
 
@@ -333,8 +333,8 @@ M  sitemap-wikchamni.xml
 >> git commit -m "automated database update"
 
 AUTO GIT COMMIT
-[main 37a4668] automated database update
- 4 files changed, 16 insertions(+), 2 deletions(-)
+[main a1c8ca0] automated database update
+ 4 files changed, 2 insertions(+), 16 deletions(-)
 
 >> git push
 
@@ -344,5 +344,5 @@ DONE
 === SUMMARY OF TASKS ===
 
 
-All tasks DONE in 4481.2 ms
+All tasks DONE in 4025.7 ms
 
