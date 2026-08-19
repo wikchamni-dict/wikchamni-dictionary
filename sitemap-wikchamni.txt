@@ -5710,7 +5710,6 @@ https://dev-wikchamnidictionary.library.fresnostate.edu/lexicon?lang=en&amp;entr
 https://dev-wikchamnidictionary.library.fresnostate.edu/lexicon?lang=en&amp;entry=5705
 https://dev-wikchamnidictionary.library.fresnostate.edu/lexicon?lang=en&amp;entry=5706
 https://dev-wikchamnidictionary.library.fresnostate.edu/lexicon?lang=en&amp;entry=5707
-https://dev-wikchamnidictionary.library.fresnostate.edu/lexicon?lang=en&amp;entry=5708
 https://dev-wikchamnidictionary.library.fresnostate.edu/lexicon?lang=wk&amp;entry=0
 https://dev-wikchamnidictionary.library.fresnostate.edu/lexicon?lang=wk&amp;entry=1
 https://dev-wikchamnidictionary.library.fresnostate.edu/lexicon?lang=wk&amp;entry=2
@@ -18762,4 +18761,3 @@ https://dev-wikchamnidictionary.library.fresnostate.edu/lexicon?lang=wk&amp;entr
 https://dev-wikchamnidictionary.library.fresnostate.edu/lexicon?lang=wk&amp;entry=13048
 https://dev-wikchamnidictionary.library.fresnostate.edu/lexicon?lang=wk&amp;entry=13049
 https://dev-wikchamnidictionary.library.fresnostate.edu/lexicon?lang=wk&amp;entry=13050
-https://dev-wikchamnidictionary.library.fresnostate.edu/lexicon?lang=wk&amp;entry=13051
