@@ -45,8 +45,8 @@ FILE_DATABASE_INPUT = 'toolbox-output'
 
 # root directory of website where dictionary is hosted
     # must be absolute url with FQDN and protocol (ex. https://example.com or https://example.com/wikchamni)
-URL_BASE = 'https://ssirrikh.github.io/wikchamni'
-# URL_BASE = 'https://wikchamnidictionary.library.fresnostate.edu/'
+# URL_BASE = 'https://ssirrikh.github.io/wikchamni'
+URL_BASE = 'https://dev-wikchamnidictionary.library.fresnostate.edu/'
 
 
 
@@ -72,26 +72,7 @@ STATIC_PAGES = [
     f'{URL_BASE}/about',
     f'{URL_BASE}/language',
     f'{URL_BASE}/lexicon',
-    # debug pages
-    f'{URL_BASE}/lexicon-test-nojs-notemplate-anchors', # fully-static page, no templates
-    f'{URL_BASE}/lexicon-test-nojs-buttons', # fully-static pages with templates
-    f'{URL_BASE}/lexicon-test-nojs-anchors',
-    f'{URL_BASE}/lexicon-test-static-buttons', # static pages w/ minimal JS
-    f'{URL_BASE}/lexicon-test-static-anchors',
-    f'{URL_BASE}/lexicon-test-dynamic20-anchors', # dynamically-built pages w/ few elements
-    f'{URL_BASE}/lexicon-test-dynamic500-anchors',
-    f'{URL_BASE}/lexicon-test-longjs-static', # page with expensive JS, but few elements
-    f'{URL_BASE}/lexicon-test-full-nojs-notemplate-anchors', # fully-static page w/ no JS, but many elements (static full eng dictionary)
-    # crawler test pages
-    f'{URL_BASE}/lexicon-test-unlinked', # stub page included in sitemap, but never linked to by another page
-    # f'{URL_BASE}/lexicon-test-unmapped', # stub page linked to by another page, but not included in sitemap
 ]
-# STATIC_PAGES = [
-#     f'{URL_BASE}',
-#     f'{URL_BASE}/about',
-#     f'{URL_BASE}/language',
-#     f'{URL_BASE}/lexicon',
-# ]
 
 # file management
 DIR_DATA = 'assets/data'
@@ -111,7 +92,7 @@ RE_TOKEN = re.compile(r'^\\([^\s]+)(?: ([^\n]*))?$') # Toolbox SF token of form 
 RE_SYNONYM_SPLITTER = re.compile(r';\s*')
 SYNONYM_JOIN = '; '
 
-# helpers
+# logfile helpers
 USE_BUFFER_LOG = False
 logfile = None
 logbuff = ''
@@ -901,10 +882,6 @@ GIT_MANIFEST_LOGS = [
             # git add file
         # git commit -m "automated update logs"
         # git push
-    
-    # TODO: check if log.txt gets overwritten by `git reset` mid-generation
-        # if so, need to write log to untracked buffer file
-        # then copy buffer into log.txt before followup commit
 
 # check that git is installed
 def git_version():
@@ -989,7 +966,7 @@ def git_fetch():
             return { 'success': False, 'error': stderr }
     # reset any local modifications/deletions of tracked files to ensure clean working tree
     # (untracked local files will be left untouched)
-    GIT_ORIGIN = 'origin/main'
+    GIT_ORIGIN = 'origin/auto-update'
     log(f'>> git reset --hard {GIT_ORIGIN}\n')
     with subprocess.Popen(['git', 'reset', '--hard', GIT_ORIGIN], cwd='..', stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
         stdout_raw, stderr_raw = process.communicate()
