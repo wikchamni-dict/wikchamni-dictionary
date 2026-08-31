@@ -1,7 +1,7 @@
 ////////
 //// WIKCHAMNI AUTO-UPDATE SCRIPT
-//// Last run Aug 19 2026 15:51
-//// For web domain https://dev-wikchamnidictionary.library.fresnostate.edu
+//// Last run Aug 31 2026 13:15
+//// For web domain https://wikchamnidictionary.library.fresnostate.edu
 ////////
 
 Checking for "toolbox-output" (no file extension)...
@@ -17,7 +17,7 @@ Checking for updates to code...
 DONE
 >> git reset --hard origin/main
 
-HEAD is now at aa7f861 automated database update (log file)
+HEAD is now at 348b28b Merge branch 'main' of https://github.com/fresnostate-library/wikchamni-dictionary
 
 
 
@@ -28,7 +28,7 @@ Normalizing characters and whitespace...
 Rejoining multiline datafields...
 Scrubbing PID from filepaths...
 
-DONE in 88.3 ms
+DONE in 85.9 ms
 
 82 unique field markers encountered across 44489 tokens.
 0 tokens were ill-formed, and 6 tokens were blank.
@@ -37,7 +37,7 @@ Scrubbed 5507 absolute filepaths of potential PID.
 
 === Tokenizing data... ===
 
-DONE in 43.4 ms.
+DONE in 42.5 ms.
 
 0 tokens were ill-formed, and 6 tokens were blank.
 81 unique field markers encountered across all 44483 tokens in tokenstream.
@@ -261,7 +261,7 @@ Parsing runs into entries...
     WARN Headless \xe " 20/Feb/2019" has no \xv to attach to in entry "English" of catg "Part of Speech"
     Attach point was: {'L2': 'Contact:Geoff Gamble -- ggamble@mail.fresnostate.edu', 'form': None}
 
-DONE in 52.6 ms.
+DONE in 45.3 ms.
 
 Detected 4607 standard entries and 712 lexeme entries.
 Detected 9 non-run-starting tokens:
@@ -296,53 +296,44 @@ Indexing standard entries...
 Indexing lexeme entries...
 Sorting entries...
 
-DONE in 79.4 ms.
+DONE in 75.8 ms.
 
 Sorted 5708 L1 words and 13051 L2 words.
 
 === Generating output files... ===
 
 Writing sterilized data back to Toolbox SF...
-DONE in 16.4 ms
+DONE in 16.9 ms
 Baking database into web-compatible JSON...
-DONE in 14.1 ms
+DONE in 12.1 ms
 Building sitemap for 4 static pages, 5708 English words, and 13051 Wikchamni words...
     Builing sitemap.txt...
     Builing sitemap.xml...
-DONE in 13.9 ms
+DONE in 12.4 ms
 
 === Pushing changes to cloud... ===
 
 Adding 4 files from manifest...
 >> git add assets/data/toolbox-output-clean
 >> git add assets/data/toolbox-output-clean.json
->> git add sitemap-wikchamni.txt
->> git add sitemap-wikchamni.xml
+>> git add sitemap.txt
+>> git add sitemap.xml
 All files added.
 >> git status --porcelain=v1 -b
 
 ## main...origin/main
-M  assets/data/toolbox-output-clean
-M  assets/data/toolbox-output-clean.json
-M  sitemap-wikchamni.txt
-M  sitemap-wikchamni.xml
+A  sitemap.txt
+A  sitemap.xml
  M update/log.txt
 ?? update/toolbox-output
 
-4 files have been modified and are ready to be committed.
->> git commit -m "automated database update"
+0 files have been modified and are ready to be committed.
 
-AUTO GIT COMMIT
-[main a1c8ca0] automated database update
- 4 files changed, 2 insertions(+), 16 deletions(-)
+No changes detected. Nothing to commit or push.
 
->> git push
-
-
-DONE
 
 === SUMMARY OF TASKS ===
 
 
-All tasks DONE in 4025.7 ms
+All tasks DONE in 1869.0 ms
 
