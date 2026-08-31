@@ -47,7 +47,7 @@ FILE_DATABASE_INPUT = 'toolbox-output'
     # must be absolute url with FQDN and protocol (ex. https://example.com or https://example.com/wikchamni)
     # must NOT include trailing slash
 # URL_BASE = 'https://ssirrikh.github.io/wikchamni'
-URL_BASE = 'https://dev-wikchamnidictionary.library.fresnostate.edu'
+URL_BASE = 'https://wikchamnidictionary.library.fresnostate.edu'
 
 
 
@@ -81,7 +81,7 @@ DIR_MEDIA = 'media'
 DIR_UPDATE = 'update'
 FILE_DATABASE_OUTPUT = 'toolbox-output-clean' # no file ext; both "output" (extensionless) and "output.json" will be generated
 FILE_LOG = 'log' # no file ext; "log.txt" will be generated
-FILE_SITEMAP = 'sitemap-wikchamni' # no file ext; both "sitemap.txt" and "sitemap.xml" will be generated
+FILE_SITEMAP = 'sitemap' # no file ext; both "sitemap.txt" and "sitemap.xml" will be generated
 # flags
 FLAG_VERBOSE = False
 FLAG_VERBOSE_PARSED = False
