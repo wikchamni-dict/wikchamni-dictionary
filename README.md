@@ -60,7 +60,7 @@ This section contains instructions for updating things that aren't handled autom
 #### Adding New Images/Audio
 Unfortunately, Toolbox doesn't actually attach images or audio to a project. Instead, "adding" media to an entry saves a link to the file on your hard drive. In addition to presenting a security risk, this means the project leaves behind all media when moved between computers or exported into Standard Format.
 
-`update.py` changes all links into relative paths that look for media files in the "media" folder of this repository. To make media available to the live dictionary, you must copy it into the "media" folder and manually push it to the cloud with Git.
+`update.py` changes all links into relative paths that look for media files in the "media" folder of this repository (as well as modifying audio links to MP3 instead of WAV). To make media available to the live dictionary, you must copy it into the "media" folder and manually push it to the cloud with Git.
 
 1. Add all new audio and images into the "media" folder. Most image formats are accepted, but audio MUST be in MP3 format due to limitations during development.
 2. (Optional) If working with high-quality WAV audio, place the WAV version in the "audio-wav" folder for archival purposes, and create an MP3 version to place in the "media" folder for use in the live dictionary.
