@@ -13,14 +13,14 @@ The Wikchamni Dictionary is dynamically built from the output of [SIL Toolbox](h
 
 Jump to section:
 
-[Exporting Data From SIL Toolbox]\
-[Installing Python and Git]\
-[Rebuilding the Dictionary with `update.py`]
+[Exporting Data From SIL Toolbox](https://github.com/wikchamni-dict/wikchamni-dictionary/#exporting-data-from-sil-toolbox)\
+[Installing Python and Git](https://github.com/wikchamni-dict/wikchamni-dictionary/#installing-python-and-git)\
+[Rebuilding the Dictionary with `update.py`](https://github.com/wikchamni-dict/wikchamni-dictionary/#rebuilding-the-dictionary-with-updatepy)
 
-[Adding New Images/Audio]\
-[Manually Editing Data]\
-[Switching Web Domains]\
-[Adding Support For New Grammatical Cases]
+[Adding New Images/Audio](https://github.com/wikchamni-dict/wikchamni-dictionary/#adding-new-imagesaudio)\
+[Manually Editing Data](https://github.com/wikchamni-dict/wikchamni-dictionary/#manually-editing-data)\
+[Switching Web Domains](https://github.com/wikchamni-dict/wikchamni-dictionary/#switching-hosts--web-domains)\
+[Adding Support For New Grammatical Cases](https://github.com/wikchamni-dict/wikchamni-dictionary/#adding-support-for-new-grammatical-cases)
 
 ### Exporting Data From SIL Toolbox
 1. Open the project in SIL Toolbox.
@@ -29,7 +29,7 @@ Jump to section:
 4. (Optional) Toolbox's "Standard Format" doesn't have any file extension by default, but you can safely add a `.txt` extension and view it in your text editor of choice.
 
 ### Installing Python and Git
-You must have both Python and Git installed to update the dictionary with `update.py`.
+You must have both Python and Git installed to update the dictionary with `update.py`. If you already have both set up, you ignore this section.
 
 Installing Python is fairly straightforward. Simply grab the appropriate "Latest Python 3 Release" installer and follow its instructions for [Windows](https://www.python.org/downloads/windows/), [Mac](https://www.python.org/downloads/macos/), or [Linux](https://www.python.org/downloads/source/).
 
@@ -46,13 +46,15 @@ git config --global user.email "12345678+Username@users.noreply.github.com"
 Once that's all done, you're ready to push updates to the dictionary.
 
 ### Rebuilding the Dictionary with `update.py`
+`update.py` prepares Toolbox's exported data for use in the live dictionary while scanning for errors. It also rebuilds the dictionary's sitemap, which allows every entry to be individually-searchable from Google and other search engines.
+
 1. Export data from Toolbox in "Standard Format" and rename the file to `toolbox-output` or `toolbox-output.txt` (the update script checks for both).
 2. Place the `toolbox-output` file in the "update" folder, next to `update.py`. (Replacing the previous version of `toolbox-output` if necessary.)
-3. Open a terminal inside the "update" folder and run `python update.py`. It may take a minute or two to push your changes to the cloud, depending on your internet speeds.
+3. Open a terminal inside the "update" folder and run the command `python update.py`. It may take a minute or two to push your changes to the cloud, depending on your internet speeds.
 
 Once `update.py` is done, it will print "ALL WORK DONE / PROGRAM TERMINATES SUCCESSFULLY" and exit.
 
-If anything goes wrong during the update process, `update.py` will print an error instead and exit early. Check `log.txt` in the update folder and either try to fix the error, or send the log file to someone who can.
+If anything goes wrong during the update process, `update.py` will print an error instead and exit early. Check `log.txt` in the "update" folder and either try to fix the error, or send the log file to someone who can.
 
 ## Advanced Updates
 This section contains instructions for updating things that aren't handled automatically by `update.py`.
