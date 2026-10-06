@@ -85,7 +85,7 @@ If you are unable to use Toolbox for any reason, or if you don't have access to 
 
 #### Adding Support For New Grammatical Cases
 
-SIL Toolbox allows users to define custom datafields to structure their linguistic data as they see fit. Although this makes Toolbox very powerful, the lack of standardization also makes it difficult for other programs to work with the data.
+SIL Toolbox allows users to define custom datafields to structure their linguistic data as they see fit. Toolbox projects list these custom fields in a `.typ` file, but we were unable to obtain a copy during development. Thus, grammatical cases must be handled by the following semi-manual process instead.
 
 Dr. Gamble has created several custom datafields to represent grammatical cases, and occasionally adds new ones. If he does, you can find them by searching `update/log.txt` for a section that looks like "X token types were completely unhandled:". This will list the number of occurences of each datafield that isn't used by the live dictionary.
 
