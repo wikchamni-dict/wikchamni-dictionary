@@ -112,11 +112,17 @@ If you need to add support for a datafield that isn't a wordform or note, you wi
 
 ## Technical Details (aka "What `update.py` Does")
 
-### Preprocess Toolbox Output
-...
+### Preprocessing Toolbox Output
+Besides what's required for the tokenizer-parser in the next step, `update.py` performs character normalization and PII-scrubbing.
+
+Wikchamni data was entered across such a large span of time that keyboards and software have changed, which made some words unsearchable in the older version of the dictionary. Wikchamni letters commonly use apostrophes. While some older computers entered the ASCII character 700 [ʼ] angled apostrophe, modern computers default to ASCII 39 ['] vertical apostrophes, and word processors like Microsoft Word have begun using "smart quotes" instead (ASCII 8216 [‘] and 8217 [’]). All these characters are normalized to vertical apostrophes for searcheability.
+
+Toolbox also attaches images/audio to entries by saving an absolute path to the file location. In addition to exposing PII, this makes media inacessible if the project is moved to another computer/server. All absolute filepaths are converted to relative paths pointing to the "media" folder to scrub PII and allow transferability.
 
 ### Parse Data to Check Validity
-...
+`update.py` contains a copy of the tokenizer-parser from the online dictionary. The parser takes note of ill-formed and blank entries, and records them in `log.txt` for a linguist to eventually review and correct. Various statistics about the database are also recorded to `log.txt`.
 
-### Build Sitemap
-...
+Finally, the parsed entries are used in the construction of the sitemap, which indexes entries by language and entry id. Note that SIL Toolbox does not provide stable entry id numbers, so the exact entry referred to by an id number may change as entries are added/deleted/merged.
+
+### Sitemap Generation
+`update.py` uses the parse from the previous step to generate both `sitemap.xml` and `sitemap.txt` per [Google's specifications](https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap), to allow search engine crawlers to index every entry.
