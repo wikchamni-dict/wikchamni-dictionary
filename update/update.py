@@ -609,7 +609,7 @@ def parse(tokenstream):
             current_attach_point = current_entry['L2'][-1]
             # log(f'    Attach point is L2 headword {current_attach_point}')
         elif field == TOKEN_CATG: # convert entry to lexeme if part of speech is x-theme
-            if current_entry['catg'] != '': log(f'    WARN Entry "{SYNONYM_JOIN.join(current_entry['L1'])}" has multiple \\ps. Replacing catg "{current_entry['catg']}" with "{contents}".')
+            if current_entry['catg'] != '': log(f'    WARN Entry "{SYNONYM_JOIN.join(current_entry["L1"])}" has multiple \\ps. Replacing catg "{current_entry['catg']}" with "{contents}".')
             current_entry['catg'] = contents
             if contents in PARSE_LEXEME_CATGS:
                 current_entry = entryToLexeme(current_entry)
