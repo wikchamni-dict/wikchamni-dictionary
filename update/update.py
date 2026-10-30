@@ -531,7 +531,7 @@ def BlankEntry():
 def entryToLexeme(entry):
 	entry['isLexeme'] = True
 	if len(entry['L2']) > 0: entry['L2'][0]['form'] = TOKEN_PARADIGM_UNDERLYING; # headword is underlying form by default
-	if len(entry['examples']) > 0: log(f'WARN L2 example before \\ps in entry for "{SYNONYM_JOIN.join(entry['L1'])}"')
+	if len(entry['examples']) > 0: log(f'WARN L2 example before \\ps in entry for "{SYNONYM_JOIN.join(entry["L1"])}"')
 	return entry
 
 def parse(tokenstream):
