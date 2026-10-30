@@ -1121,7 +1121,7 @@ USE_BUFFER_LOG = True
 
 log(f'////////')
 log(f'//// WIKCHAMNI AUTO-UPDATE SCRIPT')
-log(f'//// Last run {today.strftime('%b %d %Y %H:%M')}')
+log(f'//// Last run {today.strftime("%b %d %Y %H:%M")}')
 log(f'//// For web domain {URL_BASE}')
 log(f'////////')
 
