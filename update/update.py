@@ -631,16 +631,16 @@ def parse(tokenstream):
             if current_attach_point:
                 # check for preceding \xv; create headless example is none
                 if 'L1' not in current_attach_point:
-                    log(f'    WARN Headless \\xe "{contents}" has no \\xv to attach to in entry "{SYNONYM_JOIN.join(current_entry['L1'])}" of catg "{current_entry['catg']}"')
+                    log(f'    WARN Headless \\xe "{contents}" has no \\xv to attach to in entry "{SYNONYM_JOIN.join(current_entry["L1"])}" of catg "{current_entry["catg"]}"')
                     log(f'    Attach point was: {current_attach_point}')
                     current_entry['examples'].append({'L1':None, 'L2':None})
                     current_attach_point = current_entry['examples'][-1]
                 # check if we would be overriding prev data
-                if current_attach_point['L1'] is not None: log(f'    WARN Multiple \\xe after single \\xv. Replacing L1 "{current_attach_point['L1']}" with "{contents}"')
+                if current_attach_point['L1'] is not None: log(f'    WARN Multiple \\xe after single \\xv. Replacing L1 "{current_attach_point["L1"]}" with "{contents}"')
                 current_attach_point['L1'] = contents
                 # log(f'    Attach point: {current_attach_point}')
             else:
-                log(f'    WARN L1 \\{field} "{contents}" has no attach point for entry "{SYNONYM_JOIN.join(current_entry['L1'])}"')
+                log(f'    WARN L1 \\{field} "{contents}" has no attach point for entry "{SYNONYM_JOIN.join(current_entry["L1"])}"')
                 log(f'    Attach point: {current_attach_point}')
                 log(f'    Current entry: {current_entry}')
         # media (images and audio)
@@ -651,7 +651,7 @@ def parse(tokenstream):
                 if 'audio' not in current_attach_point: current_attach_point['audio'] = []
                 current_attach_point['audio'].append(contents)
             else:
-                log(f'    WARN Audio token \\{field} "{contents}" has no attach point in entry "{SYNONYM_JOIN.join(current_entry['L1'])}" of catg "{current_entry['catg']}". Attaching to new headless example.')
+                log(f'    WARN Audio token \\{field} "{contents}" has no attach point in entry "{SYNONYM_JOIN.join(current_entry["L1"])}" of catg "{current_entry["catg"]}". Attaching to new headless example.')
                 current_entry['examples'].append({'L1':None, 'L2':None, 'audio':[contents]})
                 current_attach_point = current_entry['examples'][-1]
                 log(f'    Audio stored in: {current_entry['examples'][-1]}')
@@ -678,23 +678,23 @@ def parse(tokenstream):
         # n-theme,v-theme,v-base lexeme entries specify wordform catg with special token type
         elif field in WORDFORM_NAMES:
             if FLAG_VERBOSE_PARSED: log(f'    LEXEME ENTRY L2 \\{field} {contents}')
-            if not current_entry['isLexeme'] and field != TOKEN_PARADIGM_UNDERLYING and field != TOKEN_VARIANT: log(f'    WARN Lexeme form label "\\{field}" appeared in standard entry "{SYNONYM_JOIN.join(current_entry['L1'])}" of catg "{current_entry['catg']}"')
+            if not current_entry['isLexeme'] and field != TOKEN_PARADIGM_UNDERLYING and field != TOKEN_VARIANT: log(f'    WARN Lexeme form label "\\{field}" appeared in standard entry "{SYNONYM_JOIN.join(current_entry["L1"])}" of catg "{current_entry["catg"]}"')
             for L2 in re.split(RE_SYNONYM_SPLITTER,contents):
                 current_entry['L2'].append({'L2':L2, 'form':field})
         # prn-theme lexeme entries specify wordform and catg with \pdl \pdv pairs
         elif field == TOKEN_PARADIGM_LABEL:
             # \pdl is the only field besides \mr that contains an explicit form label (labels next \pdv)
             if FLAG_VERBOSE_PARSED: log(f'    L2 FORM LABEL \\{field} {contents}')
-            if current_entry['isLexeme'] == False: log(f'    WARN Lexeme paradigm label \\pdl "{contents}" appeared in standard entry "{SYNONYM_JOIN.join(current_entry['L1'])}" of catg "{current_entry['catg']}"')
+            if current_entry['isLexeme'] == False: log(f'    WARN Lexeme paradigm label \\pdl "{contents}" appeared in standard entry "{SYNONYM_JOIN.join(current_entry["L1"])}" of catg "{current_entry["catg"]}"')
             current_entry['L2'].append({'L2':None, 'form':contents}) # create new paradigm with this label
         elif field == TOKEN_PARADIGM_VERNACULAR:
             if FLAG_VERBOSE_PARSED: log(f'    LEXEME ENTRY L2 \\{field} {contents}')
-            if current_entry['isLexeme'] == False: log(f'    WARN Lexeme paradigm vernacular \\pdv "{contents}" appeared in standard entry "{SYNONYM_JOIN.join(current_entry['L1'])}" of catg "{current_entry['catg']}"')
+            if current_entry['isLexeme'] == False: log(f'    WARN Lexeme paradigm vernacular \\pdv "{contents}" appeared in standard entry "{SYNONYM_JOIN.join(current_entry["L1"])}" of catg "{current_entry["catg"]}"')
             if len(current_entry['L2']) <= 0:
                 log(f'    WARN Lexeme paradigm vernacular \\pdv "{contents}" had no paradigm vernacular \\pdl to attach to (headless paradigm).')
                 current_entry['L2'].append({'L2':contents, 'form':None}) # if we didn't encounter \pdl before this \pdv, we're a headless paradigm
             else:
-                if current_entry['L2'][-1]['L2'] is not None: log(f'    WARN \\pdl "{current_entry['L2'][-1]['form']}" had \\pdv. Replacing paradigm L2 "{current_entry['L2'][-1]['L2']}" with "{contents}".')
+                if current_entry['L2'][-1]['L2'] is not None: log(f'    WARN \\pdl "{current_entry['L2'][-1]['form']}" had \\pdv. Replacing paradigm L2 "{current_entry["L2"][-1]["L2"]}" with "{contents}".')
                 current_entry['L2'][-1]['L2'] = contents
         # default: log unhandled tokens to ensure no data is lost silently
         else:
