@@ -694,7 +694,7 @@ def parse(tokenstream):
                 log(f'    WARN Lexeme paradigm vernacular \\pdv "{contents}" had no paradigm vernacular \\pdl to attach to (headless paradigm).')
                 current_entry['L2'].append({'L2':contents, 'form':None}) # if we didn't encounter \pdl before this \pdv, we're a headless paradigm
             else:
-                if current_entry['L2'][-1]['L2'] is not None: log(f'    WARN \\pdl "{current_entry['L2'][-1]['form']}" had \\pdv. Replacing paradigm L2 "{current_entry["L2"][-1]["L2"]}" with "{contents}".')
+                if current_entry['L2'][-1]['L2'] is not None: log(f'    WARN \\pdl "{current_entry["L2"][-1]["form"]}" had \\pdv. Replacing paradigm L2 "{current_entry["L2"][-1]["L2"]}" with "{contents}".')
                 current_entry['L2'][-1]['L2'] = contents
         # default: log unhandled tokens to ensure no data is lost silently
         else:
@@ -722,7 +722,7 @@ def parse(tokenstream):
         log(f'    "{field}" : {non_run_starters[field]} occurences')
     log(f'{len(unparsed_tokens)} token types were completely unhandled:')
     for field in unparsed_tokens:
-        log(f'    "{field}" : {unparsed_tokens[field]} occurences{' (PRUNED NOTE)' if field in NOTE_NAMES else ''}')
+        log(f'    "{field}" : {unparsed_tokens[field]} occurences{" (PRUNED NOTE)" if field in NOTE_NAMES else ''}')
     if FLAG_VERBOSE:
         log(f'{len(recorded_runs)} unique runs encountered:')
         for run in recorded_runs:
