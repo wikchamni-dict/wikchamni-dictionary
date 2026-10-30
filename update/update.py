@@ -654,7 +654,7 @@ def parse(tokenstream):
                 log(f'    WARN Audio token \\{field} "{contents}" has no attach point in entry "{SYNONYM_JOIN.join(current_entry["L1"])}" of catg "{current_entry["catg"]}". Attaching to new headless example.')
                 current_entry['examples'].append({'L1':None, 'L2':None, 'audio':[contents]})
                 current_attach_point = current_entry['examples'][-1]
-                log(f'    Audio stored in: {current_entry['examples'][-1]}')
+                log(f'    Audio stored in: {current_entry["examples"][-1]}')
             # log(f'    Attach point: {current_attach_point}')
         elif field == TOKEN_MEDIA_IMAGE: # images attach to entry rather than L2 wordform
             if FLAG_VERBOSE_PARSED: log(f'    IMAGE \\{field} {contents}')
