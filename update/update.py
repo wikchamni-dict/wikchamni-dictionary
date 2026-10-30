@@ -722,7 +722,7 @@ def parse(tokenstream):
         log(f'    "{field}" : {non_run_starters[field]} occurences')
     log(f'{len(unparsed_tokens)} token types were completely unhandled:')
     for field in unparsed_tokens:
-        log(f'    "{field}" : {unparsed_tokens[field]} occurences{" (PRUNED NOTE)" if field in NOTE_NAMES else ''}')
+        log(f'    "{field}" : {unparsed_tokens[field]} occurences{" (PRUNED NOTE)" if field in NOTE_NAMES else ""}')
     if FLAG_VERBOSE:
         log(f'{len(recorded_runs)} unique runs encountered:')
         for run in recorded_runs:
@@ -748,8 +748,8 @@ def IndexCard(type,id,word='',catg='',hasAudio=False,hasImages=False):
 
 def indexCardSorter(a,b):
     # given two index cards, case-insensative sort by (word,catg)
-    keyA = f'{a['word']}{SYNONYM_JOIN}{a['catg']}'.lower()
-    keyB = f'{b['word']}{SYNONYM_JOIN}{b['catg']}'.lower()
+    keyA = f'{a["word"]}{SYNONYM_JOIN}{a["catg"]}'.lower()
+    keyB = f'{b["word"]}{SYNONYM_JOIN}{b["catg"]}'.lower()
     if keyA < keyB: return -1
     if keyA > keyB: return 1
     return 0
